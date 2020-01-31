@@ -2,7 +2,7 @@
 var mapPin = document.querySelector('#pin');
 var mapPinsBlock = document.querySelector('.map__pins');
 var advertisings = [];
-var advertisingTitles = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов']
+var advertisingTitles = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var advertisingTypes = ['palace', 'flat', 'house', 'bungalo'];
 var advertisingChecks = ['12:00', '13:00', '14:00'];
 var advertisingFeatures = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
@@ -25,9 +25,10 @@ function getArrayRandomElement(anyArray) { // случайный элемент 
 }
 
 function shuffle(anyArray) { // перемешиваем массив
-  var j, temp;
-  for(var i = anyArray.length - 1; i > 0; i--){
-    j = Math.floor(Math.random()*(i + 1));
+  var j;
+  var temp;
+  for (var i = anyArray.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
     temp = anyArray[j];
     anyArray[j] = anyArray[i];
     anyArray[i] = temp;
@@ -51,7 +52,7 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
     var locationY = getRandomInteger(130, 630);
     advertisings[i] = {
       author: {
-        avatar: 'img/avatars/user0' + (i +1) + '.png'
+        avatar: 'img/avatars/user0' + (i + 1) + '.png'
       },
       offer: {
         title: getArrayRandomElement(advertisingTitles),
@@ -63,7 +64,7 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
         checkin: getArrayRandomElement(advertisingChecks),
         checkout: getArrayRandomElement(advertisingChecks),
         features: getArrayRandomLength(advertisingFeatures),
-        // description:
+        description: getArrayRandomLength(advertisingDescriptions),
         photos: getArrayRandomLength(advertisingPhotos)
       },
       location: {
@@ -71,7 +72,6 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
         y: locationY
       }
     };
-    console.log(advertisings[i]);
   }
 }
 
@@ -83,8 +83,6 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем пи�
     newElement.style.cssText = 'left: ' + (advertisings[i].location.x + mapPin.offsetWidth / 2) + 'px; top: ' + (advertisings[i].location.y + mapPin.offsetHeight) + 'px;';
     newElement.innerHTML = '<img src="' + advertisings[i].author.avatar + '" width="40" height="40" draggable="false" alt="' + advertisings[i].offer.title + '">';
     fragment.appendChild(newElement);
-    console.log(advertisings[i].location.x);
-    console.log(newElement);
   }
   mapPinsBlock.appendChild(fragment);
 }
