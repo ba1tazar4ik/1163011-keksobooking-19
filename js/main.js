@@ -82,11 +82,12 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем пи�
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
-  var renderPin = function (advertisings) {
+  var renderPin = function (advertising) {
     var mapPin = mapPinTemplate.cloneNode(true);
 
-    mapPin.style.cssText = 'left: ' + (advertisings.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (advertisings.location.y + mapPinTemplate.offsetHeight) + 'px;';
-    mapPin.innerHTML = '<img src="' + advertisings.author.avatar + '" width="40" height="40" draggable="false" alt="' + advertisings.offer.title + '">';
+    mapPin.style.cssText = 'left: ' + (advertising.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (advertising.location.y + mapPinTemplate.offsetHeight) + 'px;';
+    mapPin.querySelector('img').setAttribute('src', advertising.author.avatar);
+    mapPin.querySelector('img').setAttribute('alt', advertising.offer.title);
 
     return mapPin;
   };
