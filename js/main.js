@@ -24,25 +24,25 @@ function getRandomInteger(min, max) { // случайное целое числ�
   return Math.floor(randomNumber);
 }
 
-function getArrayRandomElement(anyArray) { // случайный элемент масива
-  var randomNumber = Math.floor(Math.random() * anyArray.length);
-  return anyArray[randomNumber];
+function getArrayRandomElement(array) { // случайный элемент масива
+  var randomNumber = Math.floor(Math.random() * array.length);
+  return array[randomNumber];
 }
 
-function shuffle(anyArray) { // перемешиваем массив
+function shuffle(array) { // перемешиваем массив
   var j;
   var temp;
-  for (var i = anyArray.length - 1; i > 0; i--) {
+  for (var i = array.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
-    temp = anyArray[j];
-    anyArray[j] = anyArray[i];
-    anyArray[i] = temp;
+    temp = array[j];
+    array[j] = array[i];
+    array[i] = temp;
   }
-  return anyArray;
+  return array;
 }
 
-function getArrayRandomLength(anyArray) { // массив случайной длинны заполненный случайными данными
-  var shuffleArray = shuffle(anyArray);
+function getArrayRandomLength(array) { // массив случайной длинны заполненный случайными данными
+  var shuffleArray = shuffle(array);
   return shuffleArray.slice(0, getRandomInteger(0, shuffleArray.length));
 }
 
@@ -79,15 +79,16 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
   return advertisings;
 }
 
-var renderPin = function (anyArray) { // рисуем шаблон метки на карте
+var renderPin = function (ads) { // рисуем шаблон метки на карте
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
   var mapPin = mapPinTemplate.cloneNode(true);
+  var mapPinImg = mapPin.querySelector('img');
 
-  mapPin.style.cssText = 'left: ' + (anyArray.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (anyArray.location.y - mapPinTemplate.offsetHeight) + 'px;';
-  mapPin.querySelector('img').src = anyArray.author.avatar;
-  mapPin.querySelector('img').alt = anyArray.offer.title;
+  mapPin.style.cssText = 'left: ' + (ads.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ads.location.y - mapPinTemplate.offsetHeight) + 'px;';
+  mapPinImg.src = ads.author.avatar;
+  mapPinImg.alt = ads.offer.title;
 
   return mapPin;
 };
