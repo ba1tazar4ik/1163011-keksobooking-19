@@ -11,6 +11,7 @@ var MAX_PRICE_MULTIPLIER = 100;
 var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
+var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var mapPinsBlock = document.querySelector('.map__pins');
 var advertisings = [];
 
@@ -103,9 +104,37 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
   mapPinsBlock.appendChild(fragment);
 }
 
+function renderCard (ad) {
+  var mapCardTemplate = document.querySelector('#card')
+    .content
+    .querySelector('.map__card');
+  var mapCard = mapCardTemplate.cloneNode(true);
+  var mapCardAvatar = mapCard.querySelector('.popup__avatar');
+  var mapCardTitle = mapCard.querySelector('.popup__title');
+  var mapCardAdress = mapCard.querySelector('.popup__text--address');
+  var mapCardPrice = mapCard.querySelector('.popup__text--price');
+  var mapCardType = mapCard.querySelector('.popup__type');
+  var mapCardCapacity = mapCard.querySelector('.popup__text--capacity');
+  var mapCardTime = mapCard.querySelector('.popup__text--time');
+  var mapCardFeatures = mapCard.querySelector('.popup__text--features');
+  var mapCardDescription = mapCard.querySelector('.popup__description');
+  var mapCardPhotos = mapCard.querySelector('.popup__photos');
+
+  mapCardAvatar.src = ad.author.avatar;
+  mapCardTitle.textContent = ad.offer.title;
+  mapCardAdress.textContent = ad.offer.address;
+  mapCardPrice.textContent = ad.offer.price + '₽/ночь';
+  mapCardType.textContent = OFFER_TYPE[ad.offer.type];
+  mapCardCapacity.textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+  mapCardTime.textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+  mapCardDescription.textContent = ad.offer.description;
+}
+
 function getAdvertisings(advertisingsQuantity) { // получаем объявления и метки на карте
   generateAdvertisings(advertisingsQuantity);
   generateAdvertisingPins(advertisingsQuantity);
 }
 
 getAdvertisings(8);
+renderCard(advertisings[0]);
+
