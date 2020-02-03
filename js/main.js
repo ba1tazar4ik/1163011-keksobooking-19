@@ -79,16 +79,16 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
   return advertisings;
 }
 
-var renderPin = function (ads) { // рисуем шаблон метки на карте
+var renderPin = function (ad) { // рисуем шаблон метки на карте
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
   var mapPin = mapPinTemplate.cloneNode(true);
   var mapPinImg = mapPin.querySelector('img');
 
-  mapPin.style.cssText = 'left: ' + (ads.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ads.location.y - mapPinTemplate.offsetHeight) + 'px;';
-  mapPinImg.src = ads.author.avatar;
-  mapPinImg.alt = ads.offer.title;
+  mapPin.style.cssText = 'left: ' + (ad.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ad.location.y - mapPinTemplate.offsetHeight) + 'px;';
+  mapPinImg.src = ad.author.avatar;
+  mapPinImg.alt = ad.offer.title;
 
   return mapPin;
 };
