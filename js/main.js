@@ -85,7 +85,7 @@ var renderPin = function (anyArray) { // рисуем шаблон метки н
     .querySelector('.map__pin');
   var mapPin = mapPinTemplate.cloneNode(true);
 
-  mapPin.style.cssText = 'left: ' + (anyArray.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (anyArray.location.y + mapPinTemplate.offsetHeight) + 'px;';
+  mapPin.style.cssText = 'left: ' + (anyArray.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (anyArray.location.y - mapPinTemplate.offsetHeight) + 'px;';
   mapPin.querySelector('img').src = anyArray.author.avatar;
   mapPin.querySelector('img').alt = anyArray.offer.title;
 
