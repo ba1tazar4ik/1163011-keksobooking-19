@@ -104,7 +104,26 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
   mapPinsBlock.appendChild(fragment);
 }
 
-function renderCard (ad) {
+function checkMapCardBlockTextContent(mapCardBlock, ad) {
+  if (!ad) {
+    mapCardBlock.classList.add('hidden');
+  }
+  mapCardBlock.textContent = ad;
+}
+
+function checkMapCardBlockFeatures(adf, ad, mapCardBlock) {
+  if (ad.length > 0) {
+    for (var i = 0; i <= adf.length; i++) {
+      if (!ad.includes(adf[i])) {
+        mapCardBlock.querySelector('.popup__feature--' + adf[i]).classList.add('hidden');
+      }
+    }
+  } else {
+    mapCardBlock.classList.add('hidden');
+  }
+}
+
+function renderCard(ad) {
   var mapCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
@@ -116,17 +135,17 @@ function renderCard (ad) {
   var mapCardType = mapCard.querySelector('.popup__type');
   var mapCardCapacity = mapCard.querySelector('.popup__text--capacity');
   var mapCardTime = mapCard.querySelector('.popup__text--time');
-  var mapCardFeatures = mapCard.querySelector('.popup__text--features');
   var mapCardDescription = mapCard.querySelector('.popup__description');
   var mapCardPhotos = mapCard.querySelector('.popup__photos');
 
   mapCardAvatar.src = ad.author.avatar;
-  mapCardTitle.textContent = ad.offer.title;
-  mapCardAdress.textContent = ad.offer.address;
-  mapCardPrice.textContent = ad.offer.price + '₽/ночь';
-  mapCardType.textContent = OFFER_TYPE[ad.offer.type];
+  checkMapCardBlockTextContent(mapCardTitle, ad.offer.title);
+  checkMapCardBlockTextContent(mapCardAdress, ad.offer.address);
+  checkMapCardBlockTextContent(mapCardPrice, ad.offer.price) + '₽/ночь';
+  checkMapCardBlockTextContent(mapCardType, OFFER_TYPE[ad.offer.type]);
   mapCardCapacity.textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   mapCardTime.textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+  checkMapCardBlockFeatures(ADVERTISING_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
   mapCardDescription.textContent = ad.offer.description;
 }
 
