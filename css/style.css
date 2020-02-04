@@ -58,10 +58,6 @@
   overflow: hidden;
 }
 
-.hidden {
-  display: none;
-}
-
 body {
   max-width: 1200px;
   margin: 0 auto;
@@ -1248,4 +1244,8 @@ fieldset {
 .error__button:active {
   outline: none;
   opacity: 0.6;
+}
+
+.hidden {
+  display: none;
 }
