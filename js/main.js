@@ -1,4 +1,5 @@
 // eslint-disable-next-line strict
+
 var ADVERTISING_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISING_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISING_CHECKS = ['12:00', '13:00', '14:00'];
@@ -16,8 +17,26 @@ var mapPinsBlock = document.querySelector('.map__pins');
 var mapAdvertisingCard = document.querySelector('.map');
 var advertisings = [];
 
-// удаляем класс на блоке с картой(временное решение)
-document.querySelector('.map').classList.remove('map--faded');
+// блокируем карту
+// document.querySelector('.map').classList.add('map--faded');
+document.querySelector('.map__filters').classList.add('map__filters--disabled');
+document.querySelector('.ad-form').classList.add('ad-form--disabled');
+
+function xxx() {
+  if (this.disabled === false) {
+    this.setAttribute('disabled', 'true');
+  }
+}
+
+var DISABLED_FORMS = ['.map__filters', '.ad-form'];
+for (var i = 0; i < DISABLED_FORMS.length; i++) {
+  var disabledFormElements = document.querySelector(DISABLED_FORMS[i]).querySelectorAll('select');
+  disabledFormElements.forEach(function () {
+    if (this.disabled === false) {
+      this.disabled = true;
+    }
+  });
+}
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
@@ -133,24 +152,24 @@ function renderCardPhotos(ad, mapCardBlock) { // проверяем какие P
   }
 }
 
-function renderCard(ad) { // получаем карточку объявления
-  var mapCardTemplate = document.querySelector('#card')
-    .content
-    .querySelector('.map__card');
-  var mapCard = mapCardTemplate.cloneNode(true);
-
-  mapCard.querySelector('.popup__avatar').src = ad.author.avatar;
-  mapCard.querySelector('.popup__title').textContent = ad.offer.title;
-  mapCard.querySelector('.popup__text--address').textContent = ad.offer.address;
-  mapCard.querySelector('.popup__text--price').textContent = ad.offer.price + ' ₽/ночь';
-  mapCard.querySelector('.popup__type').textContent = OFFER_TYPE[ad.offer.type];
-  mapCard.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
-  mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
-  renderCardFeatures(ADVERTISING_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
-  mapCard.querySelector('.popup__description').textContent = ad.offer.description;
-  renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
-  return mapCard;
-}
+// function renderCard(ad) { // получаем карточку объявления
+//   var mapCardTemplate = document.querySelector('#card')
+//     .content
+//     .querySelector('.map__card');
+//   var mapCard = mapCardTemplate.cloneNode(true);
+//
+//   mapCard.querySelector('.popup__avatar').src = ad.author.avatar;
+//   mapCard.querySelector('.popup__title').textContent = ad.offer.title;
+//   mapCard.querySelector('.popup__text--address').textContent = ad.offer.address;
+//   mapCard.querySelector('.popup__text--price').textContent = ad.offer.price + ' ₽/ночь';
+//   mapCard.querySelector('.popup__type').textContent = OFFER_TYPE[ad.offer.type];
+//   mapCard.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
+//   mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
+//   renderCardFeatures(ADVERTISING_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
+//   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
+//   renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
+//   return mapCard;
+// }
 
 function getAdvertisings(advertisingsQuantity) { // получаем объявления и метки на карте
   generateAdvertisings(advertisingsQuantity);
@@ -158,4 +177,4 @@ function getAdvertisings(advertisingsQuantity) { // получаем объяв�
 }
 
 getAdvertisings(8);
-mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
+// mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
