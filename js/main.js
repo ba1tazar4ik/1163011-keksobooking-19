@@ -1,5 +1,5 @@
 // eslint-disable-next-line strict
-
+var DISABLED_FORMS = ['.map__filters', '.ad-form'];
 var ADVERTISING_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISING_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISING_CHECKS = ['12:00', '13:00', '14:00'];
@@ -12,31 +12,43 @@ var MAX_PRICE_MULTIPLIER = 100;
 var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
-var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
+// var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var mapPinsBlock = document.querySelector('.map__pins');
-var mapAdvertisingCard = document.querySelector('.map');
+// var mapAdvertisingCard = document.querySelector('.map');
 var advertisings = [];
 
 // блокируем карту
-// document.querySelector('.map').classList.add('map--faded');
-document.querySelector('.map__filters').classList.add('map__filters--disabled');
+document.querySelector('.map').classList.add('map--faded');
 document.querySelector('.ad-form').classList.add('ad-form--disabled');
 
-function xxx() {
-  if (this.disabled === false) {
-    this.setAttribute('disabled', 'true');
+function disableFormElements(forms) {
+  for (var i = 0; i < forms.length; i++) {
+    var disabledFormElements = document.querySelector(forms[i]).querySelectorAll('select, input, textarea');
+    disabledFormElements.forEach(function (current) {
+      if (current.disabled === false) {
+        current.disabled = true;
+      }
+    });
   }
 }
 
-var DISABLED_FORMS = ['.map__filters', '.ad-form'];
-for (var i = 0; i < DISABLED_FORMS.length; i++) {
-  var disabledFormElements = document.querySelector(DISABLED_FORMS[i]).querySelectorAll('select');
-  disabledFormElements.forEach(function () {
-    if (this.disabled === false) {
-      this.disabled = true;
+function mainMapPinMousedownHandler(evt) {
+  var buttonPressed = evt.button;
+  if (buttonPressed === 0) {
+    document.querySelector('.map').classList.remove('map--faded');
+    document.querySelector('.ad-form').classList.remove('ad-form--disabled');
+    for (var i = 0; i < DISABLED_FORMS.length; i++) {
+      var disabledFormElements = document.querySelector(DISABLED_FORMS[i]).querySelectorAll('select, input, textarea');
+      disabledFormElements.forEach(function (current) {
+        if (current.disabled === false) {
+          current.disabled = true;
+        }
+      });
     }
-  });
+  }
 }
+
+document.querySelector('.map__pin--main').addEventListener('mousedown', mainMapPinMousedownHandler);
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
@@ -122,35 +134,35 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
   mapPinsBlock.appendChild(fragment);
 }
 
-function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
-  if (ad.length > 0) {
-    for (var i = 0; i < adf.length; i++) {
-      if (!ad.includes(adf[i])) {
-        mapCardBlock.querySelector('.popup__feature--' + adf[i]).classList.add('hidden');
-      }
-    }
-  } else {
-    mapCardBlock.classList.add('hidden');
-  }
-}
-
-function renderCardPhotos(ad, mapCardBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
-  if (ad.length > 0) {
-    var fragment = document.createDocumentFragment();
-    var popupPhotoTemplate = document.querySelector('#card')
-      .content
-      .querySelector('.popup__photo');
-    mapCardBlock.innerHTML = '';
-    for (var i = 0; i < ad.length; i++) {
-      var popupPhoto = popupPhotoTemplate.cloneNode(true);
-      popupPhoto.src = ad[i];
-      fragment.appendChild(popupPhoto);
-    }
-    mapCardBlock.appendChild(fragment);
-  } else {
-    mapCardBlock.classList.add('hidden');
-  }
-}
+// function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
+//   if (ad.length > 0) {
+//     for (var i = 0; i < adf.length; i++) {
+//       if (!ad.includes(adf[i])) {
+//         mapCardBlock.querySelector('.popup__feature--' + adf[i]).classList.add('hidden');
+//       }
+//     }
+//   } else {
+//     mapCardBlock.classList.add('hidden');
+//   }
+// }
+//
+// function renderCardPhotos(ad, mapCardBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
+//   if (ad.length > 0) {
+//     var fragment = document.createDocumentFragment();
+//     var popupPhotoTemplate = document.querySelector('#card')
+//       .content
+//       .querySelector('.popup__photo');
+//     mapCardBlock.innerHTML = '';
+//     for (var i = 0; i < ad.length; i++) {
+//       var popupPhoto = popupPhotoTemplate.cloneNode(true);
+//       popupPhoto.src = ad[i];
+//       fragment.appendChild(popupPhoto);
+//     }
+//     mapCardBlock.appendChild(fragment);
+//   } else {
+//     mapCardBlock.classList.add('hidden');
+//   }
+// }
 
 // function renderCard(ad) { // получаем карточку объявления
 //   var mapCardTemplate = document.querySelector('#card')
@@ -175,6 +187,8 @@ function getAdvertisings(advertisingsQuantity) { // получаем объяв�
   generateAdvertisings(advertisingsQuantity);
   generateAdvertisingPins(advertisingsQuantity);
 }
+
+disableFormElements(DISABLED_FORMS);
 
 getAdvertisings(8);
 // mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
