@@ -1,5 +1,7 @@
 // eslint-disable-next-line strict
-var DISABLED_FORMS = ['.map__filters', '.ad-form'];
+var KEY_ENTER = 'Enter';
+var USER_PIN = document.querySelector('.map__pin--main');
+var BLOCKS_WITH_FORMS = ['.map__filters', '.ad-form'];
 var ADVERTISING_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISING_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISING_CHECKS = ['12:00', '13:00', '14:00'];
@@ -17,38 +19,30 @@ var mapPinsBlock = document.querySelector('.map__pins');
 // var mapAdvertisingCard = document.querySelector('.map');
 var advertisings = [];
 
-// блокируем карту
-document.querySelector('.map').classList.add('map--faded');
-document.querySelector('.ad-form').classList.add('ad-form--disabled');
-
-function disableFormElements(forms) {
+function disableForms(forms) { // функция переводит сайт в неактивное состояние после его первой загрузки
+  document.querySelector('.map').classList.add('map--faded');
+  document.querySelector('.ad-form').classList.add('ad-form--disabled');
   for (var i = 0; i < forms.length; i++) {
-    var disabledFormElements = document.querySelector(forms[i]).querySelectorAll('select, input, textarea');
-    disabledFormElements.forEach(function (current) {
-      if (current.disabled === false) {
-        current.disabled = true;
-      }
+    document.querySelector(forms[i]).querySelectorAll('select, input, textarea').forEach(function (current) {
+      current.disabled = true;
     });
   }
 }
 
-function mainMapPinMousedownHandler(evt) {
-  var buttonPressed = evt.button;
-  if (buttonPressed === 0) {
+function enableForms(evt, forms) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+  if (evt.button === 0 || evt.key === KEY_ENTER) {
     document.querySelector('.map').classList.remove('map--faded');
     document.querySelector('.ad-form').classList.remove('ad-form--disabled');
-    for (var i = 0; i < DISABLED_FORMS.length; i++) {
-      var disabledFormElements = document.querySelector(DISABLED_FORMS[i]).querySelectorAll('select, input, textarea');
-      disabledFormElements.forEach(function (current) {
-        if (current.disabled === false) {
-          current.disabled = true;
-        }
+    for (var i = 0; i < forms.length; i++) {
+      document.querySelector(forms[i]).querySelectorAll('select, input, textarea').forEach(function (current) {
+        current.disabled = false;
       });
     }
+    USER_PIN.removeEventListener('mousedown', enableForms);
+    USER_PIN.removeEventListener('keydown', enableForms);
+    getAdvertisings(8);
   }
 }
-
-document.querySelector('.map__pin--main').addEventListener('mousedown', mainMapPinMousedownHandler);
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
@@ -183,12 +177,17 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
 //   return mapCard;
 // }
 
+
 function getAdvertisings(advertisingsQuantity) { // получаем объявления и метки на карте
   generateAdvertisings(advertisingsQuantity);
   generateAdvertisingPins(advertisingsQuantity);
 }
 
-disableFormElements(DISABLED_FORMS);
+// запускаем включение неактивного состояния сайта после его загрузки
+disableForms(BLOCKS_WITH_FORMS);
 
-getAdvertisings(8);
+// вешаем обработчики клика мышкой по пину и нажатия Enter на пине в состоянии focus
+USER_PIN.addEventListener('mousedown', enableForms);
+USER_PIN.addEventListener('keydown', enableForms);
+
 // mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
