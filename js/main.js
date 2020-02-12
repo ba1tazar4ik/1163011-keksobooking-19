@@ -19,27 +19,31 @@ var mapPinsBlock = document.querySelector('.map__pins');
 // var mapAdvertisingCard = document.querySelector('.map');
 var advertisings = [];
 
-function disableForms(forms) { // функция переводит сайт в неактивное состояние после его первой загрузки
-  document.querySelector('.map').classList.add('map--faded');
-  document.querySelector('.ad-form').classList.add('ad-form--disabled');
-  for (var i = 0; i < forms.length; i++) {
-    document.querySelector(forms[i]).querySelectorAll('select, input, textarea').forEach(function (current) {
-      current.disabled = true;
-    });
-  }
+function switchesForm(booleanTrigger) { // функция переключает состояние форм
+  document.querySelector('.map__filters, .ad-form').querySelectorAll('select, input, textarea').forEach(function (current) {
+    current.disabled = booleanTrigger;
+  });
 }
 
-function enableForms(evt, forms) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+function disableForms() { // функция выключает карту и формы
+  document.querySelector('.map').classList.add('map--faded');
+  document.querySelector('.ad-form').classList.add('ad-form--disabled');
+
+  USER_PIN.addEventListener('mousedown', enableForms);
+  USER_PIN.addEventListener('keydown', enableForms);
+
+  switchesForm(BLOCKS_WITH_FORMS, true);
+}
+
+function enableForms(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
   if (evt.button === 0 || evt.key === KEY_ENTER) {
     document.querySelector('.map').classList.remove('map--faded');
     document.querySelector('.ad-form').classList.remove('ad-form--disabled');
-    for (var i = 0; i < forms.length; i++) {
-      document.querySelector(forms[i]).querySelectorAll('select, input, textarea').forEach(function (current) {
-        current.disabled = false;
-      });
-    }
+
     USER_PIN.removeEventListener('mousedown', enableForms);
     USER_PIN.removeEventListener('keydown', enableForms);
+
+    switchesForm(BLOCKS_WITH_FORMS, false);
     getAdvertisings(8);
   }
 }
@@ -58,12 +62,14 @@ function getArrayRandomElement(array) { // случайный элемент м�
 function shuffle(array) { // перемешиваем массив
   var j;
   var temp;
+
   for (var i = array.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
     temp = array[j];
     array[j] = array[i];
     array[i] = temp;
   }
+
   return array;
 }
 
@@ -184,10 +190,5 @@ function getAdvertisings(advertisingsQuantity) { // получаем объяв�
 }
 
 // запускаем включение неактивного состояния сайта после его загрузки
-disableForms(BLOCKS_WITH_FORMS);
-
-// вешаем обработчики клика мышкой по пину и нажатия Enter на пине в состоянии focus
-USER_PIN.addEventListener('mousedown', enableForms);
-USER_PIN.addEventListener('keydown', enableForms);
-
+disableForms();
 // mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
