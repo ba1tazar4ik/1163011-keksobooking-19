@@ -1,7 +1,10 @@
 // eslint-disable-next-line strict
 var KEY_ENTER = 'Enter';
-var USER_PIN = document.querySelector('.map__pin--main');
-var BLOCKS_WITH_FORMS = ['.map__filters', '.ad-form'];
+var USER_PIN_BLOCK = document.querySelector('.map__pin--main');
+var MAP_PINS_BLOCK = document.querySelector('.map__pins');
+var MAP_BLOCK = document.querySelector('.map');
+var AD_FORM_BLOCK = document.querySelector('.ad-form');
+var MAP_AND_FILTER_BLOCKS = document.querySelectorAll('.map__filters, .ad-form');
 var ADVERTISING_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISING_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISING_CHECKS = ['12:00', '13:00', '14:00'];
@@ -15,37 +18,39 @@ var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
-var mapPinsBlock = document.querySelector('.map__pins');
-// var mapAdvertisingCard = document.querySelector('.map');
 var advertisings = [];
 
 function switchesForm(booleanTrigger) { // функция переключает состояние форм
-  document.querySelector('.map__filters, .ad-form').querySelectorAll('select, input, textarea').forEach(function (current) {
-    current.disabled = booleanTrigger;
+  MAP_BLOCK.classList.toggle('map--faded', booleanTrigger);
+  AD_FORM_BLOCK.classList.toggle('ad-form--disabled', booleanTrigger);
+  MAP_AND_FILTER_BLOCKS.forEach(function (current) {
+    current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
+      currentValue.disabled = booleanTrigger;
+    });
   });
 }
 
 function disableForms() { // функция выключает карту и формы
-  document.querySelector('.map').classList.add('map--faded');
-  document.querySelector('.ad-form').classList.add('ad-form--disabled');
+  USER_PIN_BLOCK.addEventListener('mousedown', enableForms);
+  USER_PIN_BLOCK.addEventListener('keydown', enableForms);
 
-  USER_PIN.addEventListener('mousedown', enableForms);
-  USER_PIN.addEventListener('keydown', enableForms);
-
-  switchesForm(BLOCKS_WITH_FORMS, true);
+  switchesForm(true);
 }
 
 function enableForms(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
   if (evt.button === 0 || evt.key === KEY_ENTER) {
-    document.querySelector('.map').classList.remove('map--faded');
-    document.querySelector('.ad-form').classList.remove('ad-form--disabled');
+    USER_PIN_BLOCK.removeEventListener('mousedown', enableForms);
+    USER_PIN_BLOCK.removeEventListener('keydown', enableForms);
+    MAP_PINS_BLOCK.addEventListener('mousemove',);
 
-    USER_PIN.removeEventListener('mousedown', enableForms);
-    USER_PIN.removeEventListener('keydown', enableForms);
-
-    switchesForm(BLOCKS_WITH_FORMS, false);
+    switchesForm(false);
     getAdvertisings(8);
   }
+}
+
+function getAdress() {
+  document.addEventListener('mouseup');
+  USER_PIN_BLOCK.getAttribute()
 }
 
 function getRandomInteger(min, max) { // случайное целое число
@@ -80,7 +85,7 @@ function getArrayRandomLength(array) { // массив случайной дли
 
 function generateAdvertisings(advertisingsQuantity) { // создаем массив обявлений
   for (var i = 0; i < advertisingsQuantity; i++) {
-    var locationX = getRandomInteger(0, mapPinsBlock.offsetWidth);
+    var locationX = getRandomInteger(0, MAP_PINS_BLOCK.offsetWidth);
     var locationY = getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
 
     advertisings[i] = {
@@ -131,7 +136,7 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
     fragment.appendChild(renderPin(advertisings[i]));
   }
 
-  mapPinsBlock.appendChild(fragment);
+  MAP_PINS_BLOCK.appendChild(fragment);
 }
 
 // function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
@@ -191,4 +196,4 @@ function getAdvertisings(advertisingsQuantity) { // получаем объяв�
 
 // запускаем включение неактивного состояния сайта после его загрузки
 disableForms();
-// mapAdvertisingCard.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
+// MAP_BLOCK.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
