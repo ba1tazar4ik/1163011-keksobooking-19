@@ -5,12 +5,13 @@ var MAP_PINS_BLOCK = document.querySelector('.map__pins');
 var MAP_BLOCK = document.querySelector('.map');
 var AD_FORM_BLOCK = document.querySelector('.ad-form');
 var MAP_AND_FILTER_BLOCKS = document.querySelectorAll('.map__filters, .ad-form');
-var ADVERTISING_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
-var ADVERTISING_TYPES = ['palace', 'flat', 'house', 'bungalo'];
-var ADVERTISING_CHECKS = ['12:00', '13:00', '14:00'];
-var ADVERTISING_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var USER_ADDRESS_INPUT = document.querySelector('#address');
+var ADVERTISEMENT_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
+var ADVERTISEMENT_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var ADVERTISEMENT_CHECKS = ['12:00', '13:00', '14:00'];
+var ADVERTISEMENT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var ADVERTISING_DESCRIPTIONS = ['Подходит как туристам, так и бизнесменам', 'Жилье полностью укомплектовано и недавно отремонтировано', 'Есть вся необходимая бытовая техника', 'Есть посуда и кухонные принадлежности', 'Удобное рассположение в центре Токио', 'Понорамный вид из окон'];
-var ADVERTISING_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var ADVERTISEMENT_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var MIN_LOCATION_Y = 130;
 var MAX_LOCATION_Y = 630;
 var MAX_PRICE_MULTIPLIER = 100;
@@ -18,7 +19,12 @@ var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
-var advertisings = [];
+var advertisements = [];
+
+function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
+  USER_ADDRESS_INPUT.value = Math.floor(USER_PIN_BLOCK.offsetTop + USER_PIN_BLOCK.offsetHeight) + ' , ' + Math.floor(USER_PIN_BLOCK.offsetLeft + USER_PIN_BLOCK.offsetWidth / 2);
+  console.log('я работаю');
+}
 
 function switchesForm(booleanTrigger) { // функция переключает состояние форм
   MAP_BLOCK.classList.toggle('map--faded', booleanTrigger);
@@ -28,29 +34,36 @@ function switchesForm(booleanTrigger) { // функция переключает
       currentValue.disabled = booleanTrigger;
     });
   });
+  USER_ADDRESS_INPUT.disabled = true;
 }
 
 function disableForms() { // функция выключает карту и формы
-  USER_PIN_BLOCK.addEventListener('mousedown', enableForms);
-  USER_PIN_BLOCK.addEventListener('keydown', enableForms);
+  USER_PIN_BLOCK.addEventListener('mousedown', mapPinMousedownHandler);
+  USER_PIN_BLOCK.addEventListener('keydown', mapPinMousedownHandler);
 
+  getUserAdvertisementAddress();
   switchesForm(true);
 }
 
-function enableForms(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+function mapPinMousedownHandler(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
   if (evt.button === 0 || evt.key === KEY_ENTER) {
-    USER_PIN_BLOCK.removeEventListener('mousedown', enableForms);
-    USER_PIN_BLOCK.removeEventListener('keydown', enableForms);
-    MAP_PINS_BLOCK.addEventListener('mousemove',);
+    USER_PIN_BLOCK.removeEventListener('mousedown', mapPinMousedownHandler);
+    USER_PIN_BLOCK.removeEventListener('keydown', mapPinMousedownHandler);
 
     switchesForm(false);
-    getAdvertisings(8);
+    MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMousemoveHandler);
+    getAdvertisements(8);
   }
 }
 
-function getAdress() {
-  document.addEventListener('mouseup');
-  USER_PIN_BLOCK.getAttribute()
+function mapPinMousemoveHandler() {
+  document.addEventListener('mouseup', function () {
+    MAP_PINS_BLOCK.removeEventListener('mousemove', mapPinMousemoveHandler);
+    USER_PIN_BLOCK.addEventListener('mousedown', function () {
+      MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMousemoveHandler);
+    });
+  });
+  getUserAdvertisementAddress();
 }
 
 function getRandomInteger(min, max) { // случайное целое число
@@ -83,27 +96,27 @@ function getArrayRandomLength(array) { // массив случайной дли
   return shuffleArray.slice(0, getRandomInteger(0, shuffleArray.length));
 }
 
-function generateAdvertisings(advertisingsQuantity) { // создаем массив обявлений
-  for (var i = 0; i < advertisingsQuantity; i++) {
+function generateAdvertisements(advertisementsQuantity) { // создаем массив обявлений
+  for (var i = 0; i < advertisementsQuantity; i++) {
     var locationX = getRandomInteger(0, MAP_PINS_BLOCK.offsetWidth);
     var locationY = getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
 
-    advertisings[i] = {
+    advertisements[i] = {
       author: {
         avatar: 'img/avatars/user0' + (i + 1) + '.png'
       },
       offer: {
-        title: getArrayRandomElement(ADVERTISING_TITLES),
+        title: getArrayRandomElement(ADVERTISEMENT_TITLES),
         address: locationX + ',' + locationY,
         price: getRandomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
-        type: getArrayRandomElement(ADVERTISING_TYPES),
+        type: getArrayRandomElement(ADVERTISEMENT_TYPES),
         rooms: getRandomInteger(1, MAX_ROOMS),
         guests: getRandomInteger(0, MAX_GUESTS),
-        checkin: getArrayRandomElement(ADVERTISING_CHECKS),
-        checkout: getArrayRandomElement(ADVERTISING_CHECKS),
-        features: getArrayRandomLength(ADVERTISING_FEATURES),
+        checkin: getArrayRandomElement(ADVERTISEMENT_CHECKS),
+        checkout: getArrayRandomElement(ADVERTISEMENT_CHECKS),
+        features: getArrayRandomLength(ADVERTISEMENT_FEATURES),
         description: getArrayRandomLength(ADVERTISING_DESCRIPTIONS).join('. '),
-        photos: getArrayRandomLength(ADVERTISING_PHOTOS)
+        photos: getArrayRandomLength(ADVERTISEMENT_PHOTOS)
       },
       location: {
         x: locationX,
@@ -112,7 +125,7 @@ function generateAdvertisings(advertisingsQuantity) { // создаем масс
     };
   }
 
-  return advertisings;
+  return advertisements;
 }
 
 var renderPin = function (ad) { // рисуем шаблон метки на карте
@@ -129,11 +142,11 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   return mapPin;
 };
 
-function generateAdvertisingPins(advertisingsQuantity) { // создаем метки для обявлений
+function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < advertisingsQuantity; i++) {
-    fragment.appendChild(renderPin(advertisings[i]));
+  for (var i = 0; i < advertisementsQuantity; i++) {
+    fragment.appendChild(renderPin(advertisements[i]));
   }
 
   MAP_PINS_BLOCK.appendChild(fragment);
@@ -182,18 +195,20 @@ function generateAdvertisingPins(advertisingsQuantity) { // создаем ме�
 //   mapCard.querySelector('.popup__type').textContent = OFFER_TYPE[ad.offer.type];
 //   mapCard.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
 //   mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
-//   renderCardFeatures(ADVERTISING_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
+//   renderCardFeatures(ADVERTISEMENT_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
 //   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
 //   renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
 //   return mapCard;
 // }
 
 
-function getAdvertisings(advertisingsQuantity) { // получаем объявления и метки на карте
-  generateAdvertisings(advertisingsQuantity);
-  generateAdvertisingPins(advertisingsQuantity);
+function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
+  generateAdvertisements(advertisementsQuantity);
+  generateAdvertisementPins(advertisementsQuantity);
 }
 
 // запускаем включение неактивного состояния сайта после его загрузки
 disableForms();
-// MAP_BLOCK.insertBefore(renderCard(advertisings[0]), document.querySelector('.map__filters-container'));
+
+
+// MAP_BLOCK.insertBefore(renderCard(advertisements[0]), document.querySelector('.map__filters-container'));
