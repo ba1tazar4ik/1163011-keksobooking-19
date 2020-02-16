@@ -6,6 +6,7 @@ var MAP_BLOCK = document.querySelector('.map');
 var AD_FORM_BLOCK = document.querySelector('.ad-form');
 var MAP_AND_FILTER_BLOCKS = document.querySelectorAll('.map__filters, .ad-form');
 var USER_ADDRESS_INPUT = document.querySelector('#address');
+var USER_ROOM_NUMBER = document.querySelector('#room_number');
 var ADVERTISEMENT_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISEMENT_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISEMENT_CHECKS = ['12:00', '13:00', '14:00'];
@@ -20,51 +21,12 @@ var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var advertisements = [];
+var xxx = USER_ROOM_NUMBER.options;
+console.log (xxx);
+// USER_ROOM_NUMBER.addEventListener('change', function () {
+//   console.log(USER_ROOM_NUMBER.value);
+// });
 
-function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
-  USER_ADDRESS_INPUT.value = Math.floor(USER_PIN_BLOCK.offsetTop + USER_PIN_BLOCK.offsetHeight) + ' , ' + Math.floor(USER_PIN_BLOCK.offsetLeft + USER_PIN_BLOCK.offsetWidth / 2);
-  console.log('я работаю');
-}
-
-function switchesForm(booleanTrigger) { // функция переключает состояние форм
-  MAP_BLOCK.classList.toggle('map--faded', booleanTrigger);
-  AD_FORM_BLOCK.classList.toggle('ad-form--disabled', booleanTrigger);
-  MAP_AND_FILTER_BLOCKS.forEach(function (current) {
-    current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
-      currentValue.disabled = booleanTrigger;
-    });
-  });
-  USER_ADDRESS_INPUT.disabled = true;
-}
-
-function disableForms() { // функция выключает карту и формы
-  USER_PIN_BLOCK.addEventListener('mousedown', mapPinMousedownHandler);
-  USER_PIN_BLOCK.addEventListener('keydown', mapPinMousedownHandler);
-
-  getUserAdvertisementAddress();
-  switchesForm(true);
-}
-
-function mapPinMousedownHandler(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
-  if (evt.button === 0 || evt.key === KEY_ENTER) {
-    USER_PIN_BLOCK.removeEventListener('mousedown', mapPinMousedownHandler);
-    USER_PIN_BLOCK.removeEventListener('keydown', mapPinMousedownHandler);
-
-    switchesForm(false);
-    MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMousemoveHandler);
-    getAdvertisements(8);
-  }
-}
-
-function mapPinMousemoveHandler() {
-  document.addEventListener('mouseup', function () {
-    MAP_PINS_BLOCK.removeEventListener('mousemove', mapPinMousemoveHandler);
-    USER_PIN_BLOCK.addEventListener('mousedown', function () {
-      MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMousemoveHandler);
-    });
-  });
-  getUserAdvertisementAddress();
-}
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
@@ -205,6 +167,56 @@ function generateAdvertisementPins(advertisementsQuantity) { // создаем �
 function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
   generateAdvertisements(advertisementsQuantity);
   generateAdvertisementPins(advertisementsQuantity);
+}
+
+function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
+  USER_ADDRESS_INPUT.value = Math.floor(USER_PIN_BLOCK.offsetTop + USER_PIN_BLOCK.offsetHeight) + ' , ' + Math.floor(USER_PIN_BLOCK.offsetLeft + USER_PIN_BLOCK.offsetWidth / 2);
+  console.log('я работаю');
+}
+
+function switchesForm(booleanTrigger) { // функция переключает состояние форм
+  MAP_BLOCK.classList.toggle('map--faded', booleanTrigger);
+  AD_FORM_BLOCK.classList.toggle('ad-form--disabled', booleanTrigger);
+  MAP_AND_FILTER_BLOCKS.forEach(function (current) {
+    current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
+      currentValue.disabled = booleanTrigger;
+    });
+  });
+  USER_ADDRESS_INPUT.readOnly = true;
+}
+
+function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
+  MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMouseMoveHandler);
+  document.addEventListener('mouseup', userPinMouseUpHandler);
+}
+
+function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
+  getUserAdvertisementAddress();
+}
+
+function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
+  MAP_PINS_BLOCK.removeEventListener('mousemove', mapPinMouseMoveHandler);
+  document.removeEventListener('mouseup', userPinMouseUpHandler);
+  USER_PIN_BLOCK.addEventListener('mousedown', userPinMouseDownHandler);
+}
+
+function disableForms() { // функция выключает карту и формы
+  USER_PIN_BLOCK.addEventListener('mousedown', userPinFirstMouseDownHandler);
+  USER_PIN_BLOCK.addEventListener('mousedown', userPinMouseDownHandler);
+  USER_PIN_BLOCK.addEventListener('keydown', userPinFirstMouseDownHandler);
+
+  getUserAdvertisementAddress();
+  switchesForm(true);
+}
+
+function userPinFirstMouseDownHandler(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+  if (evt.button === 0 || evt.key === KEY_ENTER) {
+    USER_PIN_BLOCK.removeEventListener('mousedown', userPinFirstMouseDownHandler);
+    USER_PIN_BLOCK.removeEventListener('keydown', userPinFirstMouseDownHandler);
+
+    switchesForm(false);
+    getAdvertisements(8);
+  }
 }
 
 // запускаем включение неактивного состояния сайта после его загрузки
