@@ -7,6 +7,7 @@ var AD_FORM_BLOCK = document.querySelector('.ad-form');
 var MAP_AND_FILTER_BLOCKS = document.querySelectorAll('.map__filters, .ad-form');
 var USER_ADDRESS_INPUT = document.querySelector('#address');
 var USER_ROOM_NUMBER = document.querySelector('#room_number');
+var USER_CAPACITY = document.querySelector('#capacity');
 var ADVERTISEMENT_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISEMENT_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISEMENT_CHECKS = ['12:00', '13:00', '14:00'];
@@ -21,12 +22,6 @@ var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var advertisements = [];
-var xxx = USER_ROOM_NUMBER.options;
-console.log (xxx);
-// USER_ROOM_NUMBER.addEventListener('change', function () {
-//   console.log(USER_ROOM_NUMBER.value);
-// });
-
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
