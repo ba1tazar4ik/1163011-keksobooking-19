@@ -23,6 +23,21 @@ var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var advertisements = [];
 
+USER_ROOM_NUMBER.addEventListener('change', function () {
+  if (USER_CAPACITY.value > USER_ROOM_NUMBER.value) {
+    USER_CAPACITY.setCustomValidity('Passwords must match');
+  }else {
+    USER_CAPACITY.setCustomValidity('');
+  }
+});
+
+USER_CAPACITY.addEventListener('change', function () {
+  if (USER_CAPACITY.value > USER_ROOM_NUMBER.value) {
+    USER_CAPACITY.setCustomValidity('Passwords must match');
+  } else {
+    USER_CAPACITY.setCustomValidity('');
+  }
+});
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
   var randomNumber = min + Math.random() * (max + 1 - min);
