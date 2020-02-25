@@ -1,13 +1,5 @@
 // eslint-disable-next-line strict
 var KEY_ENTER = 'Enter';
-var USER_PIN_BLOCK = document.querySelector('.map__pin--main');
-var MAP_PINS_BLOCK = document.querySelector('.map__pins');
-var MAP_BLOCK = document.querySelector('.map');
-var AD_FORM_BLOCK = document.querySelector('.ad-form');
-var MAP_AND_FILTER_BLOCKS = document.querySelectorAll('.map__filters, .ad-form');
-var USER_ADDRESS_INPUT = document.querySelector('#address');
-var USER_ROOM_NUMBER = document.querySelector('#room_number');
-var USER_CAPACITY = document.querySelector('#capacity');
 var ADVERTISEMENT_TITLES = ['Прекрасная лочуга для романтиков', 'Квартира с отличным видом', 'Шикарные аппартоменты', 'Велликолепный дом для утонченных натур', 'Команта для комфортного ночлега', 'Комната в спокойном общежитии', 'Уютное гнездышко для молодоженов'];
 var ADVERTISEMENT_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ADVERTISEMENT_CHECKS = ['12:00', '13:00', '14:00'];
@@ -21,19 +13,30 @@ var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
+var quantity = 8;
 var advertisements = [];
+var userPinBlock = document.querySelector('.map__pin--main');
+var mapPinsBlock = document.querySelector('.map__pins');
+var mapBlock = document.querySelector('.map');
+var adFormBlock = document.querySelector('.ad-form');
+var adFormSubmit = document.querySelector('.ad-form__submit');
+var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
+var userAddressInput = document.querySelector('#address');
+var userRoomNumber = document.querySelector('#room_number');
+var userCapacity = document.querySelector('#capacity');
 
 // НАЧАЛО ВАЛИДАЦИИ
 function validationUserCapacity() {
-  USER_CAPACITY.setCustomValidity(
-      USER_CAPACITY.value > USER_ROOM_NUMBER.value ? ('В ' + USER_ROOM_NUMBER.value + ' комантах могут быть размещеные не более ' + USER_ROOM_NUMBER.value + ' гостей') : ('')
+  userCapacity.setCustomValidity(
+      userCapacity.value > userRoomNumber.value ? ('В ' + userRoomNumber.value + ' комантах могут быть размещеные не более ' + userRoomNumber.value + ' гостей') : ('')
   );
 }
-function OnSubmitValidationHandler(evt) {
+function submitClickHandler(evt) {
   evt.preventDefault();
+  console.log(evt.preventDefault());
   validationUserCapacity();
 }
-AD_FORM_BLOCK.addEventListener('submit', OnSubmitValidationHandler);
+adFormSubmit.addEventListener('onclick', submitClickHandler);
 // КОНЕЦ ВАЛИДАЦИИ
 
 function getRandomInteger(min, max) { // случайное целое число
@@ -68,7 +71,7 @@ function getArrayRandomLength(array) { // массив случайной дли
 
 function generateAdvertisements(advertisementsQuantity) { // создаем массив обявлений
   for (var i = 0; i < advertisementsQuantity; i++) {
-    var locationX = getRandomInteger(0, MAP_PINS_BLOCK.offsetWidth);
+    var locationX = getRandomInteger(0, mapPinsBlock.offsetWidth);
     var locationY = getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
 
     advertisements[i] = {
@@ -119,7 +122,7 @@ function generateAdvertisementPins(advertisementsQuantity) { // создаем �
     fragment.appendChild(renderPin(advertisements[i]));
   }
 
-  MAP_PINS_BLOCK.appendChild(fragment);
+  mapPinsBlock.appendChild(fragment);
 }
 
 // function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
@@ -151,7 +154,7 @@ function generateAdvertisementPins(advertisementsQuantity) { // создаем �
 //     mapCardBlock.classList.add('hidden');
 //   }
 // }
-
+//
 // function renderCard(ad) { // получаем карточку объявления
 //   var mapCardTemplate = document.querySelector('#card')
 //     .content
@@ -178,22 +181,22 @@ function getAdvertisements(advertisementsQuantity) { // получаем объ�
 }
 
 function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
-  USER_ADDRESS_INPUT.value = Math.floor(USER_PIN_BLOCK.offsetTop + USER_PIN_BLOCK.offsetHeight) + ' , ' + Math.floor(USER_PIN_BLOCK.offsetLeft + USER_PIN_BLOCK.offsetWidth / 2);
+  userAddressInput.value = Math.floor(userPinBlock.offsetTop + userPinBlock.offsetHeight) + ' , ' + Math.floor(userPinBlock.offsetLeft + userPinBlock.offsetWidth / 2);
 }
 
 function switchesForm(booleanTrigger) { // функция переключает состояние форм
-  MAP_BLOCK.classList.toggle('map--faded', booleanTrigger);
-  AD_FORM_BLOCK.classList.toggle('ad-form--disabled', booleanTrigger);
-  MAP_AND_FILTER_BLOCKS.forEach(function (current) {
+  mapBlock.classList.toggle('map--faded', booleanTrigger);
+  adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
+  mapAndFilterBlocks.forEach(function (current) {
     current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
       currentValue.disabled = booleanTrigger;
     });
   });
-  USER_ADDRESS_INPUT.readOnly = true;
+  userAddressInput.readOnly = true;
 }
 
 function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
-  MAP_PINS_BLOCK.addEventListener('mousemove', mapPinMouseMoveHandler);
+  mapPinsBlock.addEventListener('mousemove', mapPinMouseMoveHandler);
   document.addEventListener('mouseup', userPinMouseUpHandler);
 }
 
@@ -202,27 +205,37 @@ function mapPinMouseMoveHandler() { // функция заполняет инп�
 }
 
 function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
-  MAP_PINS_BLOCK.removeEventListener('mousemove', mapPinMouseMoveHandler);
+  mapPinsBlock.removeEventListener('mousemove', mapPinMouseMoveHandler);
   document.removeEventListener('mouseup', userPinMouseUpHandler);
-  USER_PIN_BLOCK.addEventListener('mousedown', userPinMouseDownHandler);
+  userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
 }
 
 function disableForms() { // функция выключает карту и формы
-  USER_PIN_BLOCK.addEventListener('mousedown', userPinFirstMouseDownHandler);
-  USER_PIN_BLOCK.addEventListener('mousedown', userPinMouseDownHandler);
-  USER_PIN_BLOCK.addEventListener('keydown', userPinFirstMouseDownHandler);
+  userPinBlock.addEventListener('mousedown', userPinFirstMouseDownHandler);
+  userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
+  userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
   getUserAdvertisementAddress();
   switchesForm(true);
 }
 
-function userPinFirstMouseDownHandler(evt) { // функция переводит сайт в активное состояние после клика или нажатия Enter на метке и убирает обработчик клика и нажатия Enter
-  if (evt.button === 0 || evt.key === KEY_ENTER) {
-    USER_PIN_BLOCK.removeEventListener('mousedown', userPinFirstMouseDownHandler);
-    USER_PIN_BLOCK.removeEventListener('keydown', userPinFirstMouseDownHandler);
+function userPinFirstMouseDownHandler(evt) { // функция переводит сайт в активное состояние после клика на метке и убирает обработчик клика и нажатия Enter
+  if (evt.button === 0) {
+    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
+    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
     switchesForm(false);
-    getAdvertisements(8);
+    getAdvertisements(quantity);
+  }
+}
+
+function userPinFirstKeyDownHandler(evt) { // функция переводит сайт в активное состояние после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+  if (evt.key === KEY_ENTER) {
+    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
+    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
+
+    switchesForm(false);
+    getAdvertisements(quantity);
   }
 }
 
@@ -230,4 +243,4 @@ function userPinFirstMouseDownHandler(evt) { // функция переводи�
 disableForms();
 
 
-// MAP_BLOCK.insertBefore(renderCard(advertisements[0]), document.querySelector('.map__filters-container'));
+// mapBlock.insertBefore(renderCard(advertisements[0]), document.querySelector('.map__filters-container'));
