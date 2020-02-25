@@ -23,21 +23,18 @@ var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var advertisements = [];
 
-USER_ROOM_NUMBER.addEventListener('change', function () {
-  if (USER_CAPACITY.value > USER_ROOM_NUMBER.value) {
-    USER_CAPACITY.setCustomValidity('Passwords must match');
-  }else {
-    USER_CAPACITY.setCustomValidity('');
+function OnSubmitValidationHandler(evt) {
+  evt.preventDefault();
+  USER_CAPACITY.setCustomValidity(
+      USER_CAPACITY.value > USER_ROOM_NUMBER.value ? ('В ' + USER_ROOM_NUMBER.value + ' комантах могут быть размещеные не более ' + USER_ROOM_NUMBER.value + ' гостей') : ('')
+  );
+  console.log(AD_FORM_BLOCK.validity.valid);
+  if (AD_FORM_BLOCK.validity.valid) {
+    AD_FORM_BLOCK.submit();
   }
-});
+}
+AD_FORM_BLOCK.addEventListener('submit', OnSubmitValidationHandler);
 
-USER_CAPACITY.addEventListener('change', function () {
-  if (USER_CAPACITY.value > USER_ROOM_NUMBER.value) {
-    USER_CAPACITY.setCustomValidity('Passwords must match');
-  } else {
-    USER_CAPACITY.setCustomValidity('');
-  }
-});
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
   var randomNumber = min + Math.random() * (max + 1 - min);
@@ -181,7 +178,6 @@ function getAdvertisements(advertisementsQuantity) { // получаем объ�
 
 function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
   USER_ADDRESS_INPUT.value = Math.floor(USER_PIN_BLOCK.offsetTop + USER_PIN_BLOCK.offsetHeight) + ' , ' + Math.floor(USER_PIN_BLOCK.offsetLeft + USER_PIN_BLOCK.offsetWidth / 2);
-  console.log('я работаю');
 }
 
 function switchesForm(booleanTrigger) { // функция переключает состояние форм
