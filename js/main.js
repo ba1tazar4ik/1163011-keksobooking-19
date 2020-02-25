@@ -23,17 +23,18 @@ var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var advertisements = [];
 
-function OnSubmitValidationHandler(evt) {
-  evt.preventDefault();
+// НАЧАЛО ВАЛИДАЦИИ
+function validationUserCapacity() {
   USER_CAPACITY.setCustomValidity(
       USER_CAPACITY.value > USER_ROOM_NUMBER.value ? ('В ' + USER_ROOM_NUMBER.value + ' комантах могут быть размещеные не более ' + USER_ROOM_NUMBER.value + ' гостей') : ('')
   );
-  console.log(AD_FORM_BLOCK.validity.valid);
-  if (AD_FORM_BLOCK.validity.valid) {
-    AD_FORM_BLOCK.submit();
-  }
+}
+function OnSubmitValidationHandler(evt) {
+  evt.preventDefault();
+  validationUserCapacity();
 }
 AD_FORM_BLOCK.addEventListener('submit', OnSubmitValidationHandler);
+// КОНЕЦ ВАЛИДАЦИИ
 
 function getRandomInteger(min, max) { // случайное целое число
   // случайное число от min до (max+1)
