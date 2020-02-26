@@ -34,8 +34,9 @@ function validationUserCapacity() {
 function submitClickHandler(evt) {
   evt.preventDefault();
   validationUserCapacity();
+  adFormBlock.requestSubmit(adFormSubmit);
 }
-adFormSubmit.addEventListener('onclick', submitClickHandler);
+adFormSubmit.addEventListener('click', submitClickHandler);
 // КОНЕЦ ВАЛИДАЦИИ
 
 function getRandomInteger(min, max) { // случайное целое число
