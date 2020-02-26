@@ -33,7 +33,6 @@ function validationUserCapacity() {
 }
 function submitClickHandler(evt) {
   evt.preventDefault();
-  console.log(evt.preventDefault());
   validationUserCapacity();
 }
 adFormSubmit.addEventListener('onclick', submitClickHandler);
@@ -219,23 +218,23 @@ function disableForms() { // функция выключает карту и ф�
   switchesForm(true);
 }
 
-function userPinFirstMouseDownHandler(evt) { // функция переводит сайт в активное состояние после клика на метке и убирает обработчик клика и нажатия Enter
-  if (evt.button === 0) {
-    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
+function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
+  userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
+  userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    switchesForm(false);
-    getAdvertisements(quantity);
+  switchesForm(false);
+  getAdvertisements(quantity);
+}
+
+function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
+  if (evt.button === 0) {
+    activateForm();
   }
 }
 
-function userPinFirstKeyDownHandler(evt) { // функция переводит сайт в активное состояние после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+function userPinFirstKeyDownHandler(evt) { // функция запускает активацию сайта после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
   if (evt.key === KEY_ENTER) {
-    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
-
-    switchesForm(false);
-    getAdvertisements(quantity);
+    activateForm();
   }
 }
 
