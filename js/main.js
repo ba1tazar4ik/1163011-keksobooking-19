@@ -13,7 +13,8 @@ var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
-var quantity = 8;
+var QUANTITY = 8;
+var advertisement = {};
 var advertisements = [];
 var userPinBlock = document.querySelector('.map__pin--main');
 var mapPinsBlock = document.querySelector('.map__pins');
@@ -69,33 +70,37 @@ function getArrayRandomLength(array) { // массив случайной дли
   return shuffleArray.slice(0, getRandomInteger(0, shuffleArray.length));
 }
 
+function generateAdvertisement(index) { // создаем объект обьявления
+  var locationX = getRandomInteger(0, mapPinsBlock.offsetWidth);
+  var locationY = getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
+
+  return {
+    author: {
+      avatar: 'img/avatars/user0' + (index + 1) + '.png'
+    },
+    offer: {
+      title: getArrayRandomElement(ADVERTISEMENT_TITLES),
+      address: locationX + ',' + locationY,
+      price: getRandomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
+      type: getArrayRandomElement(ADVERTISEMENT_TYPES),
+      rooms: getRandomInteger(1, MAX_ROOMS),
+      guests: getRandomInteger(0, MAX_GUESTS),
+      checkin: getArrayRandomElement(ADVERTISEMENT_CHECKS),
+      checkout: getArrayRandomElement(ADVERTISEMENT_CHECKS),
+      features: getArrayRandomLength(ADVERTISEMENT_FEATURES),
+      description: getArrayRandomLength(ADVERTISING_DESCRIPTIONS).join('. '),
+      photos: getArrayRandomLength(ADVERTISEMENT_PHOTOS)
+    },
+    location: {
+      x: locationX,
+      y: locationY
+    }
+  };
+}
+
 function generateAdvertisements(advertisementsQuantity) { // создаем массив обявлений
   for (var i = 0; i < advertisementsQuantity; i++) {
-    var locationX = getRandomInteger(0, mapPinsBlock.offsetWidth);
-    var locationY = getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
-
-    advertisements[i] = {
-      author: {
-        avatar: 'img/avatars/user0' + (i + 1) + '.png'
-      },
-      offer: {
-        title: getArrayRandomElement(ADVERTISEMENT_TITLES),
-        address: locationX + ',' + locationY,
-        price: getRandomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
-        type: getArrayRandomElement(ADVERTISEMENT_TYPES),
-        rooms: getRandomInteger(1, MAX_ROOMS),
-        guests: getRandomInteger(0, MAX_GUESTS),
-        checkin: getArrayRandomElement(ADVERTISEMENT_CHECKS),
-        checkout: getArrayRandomElement(ADVERTISEMENT_CHECKS),
-        features: getArrayRandomLength(ADVERTISEMENT_FEATURES),
-        description: getArrayRandomLength(ADVERTISING_DESCRIPTIONS).join('. '),
-        photos: getArrayRandomLength(ADVERTISEMENT_PHOTOS)
-      },
-      location: {
-        x: locationX,
-        y: locationY
-      }
-    };
+    advertisements[i] = generateAdvertisement(i);
   }
 
   return advertisements;
@@ -184,7 +189,7 @@ function getUserAdvertisementAddress() { // функция записывает 
   userAddressInput.value = Math.floor(userPinBlock.offsetTop + userPinBlock.offsetHeight) + ' , ' + Math.floor(userPinBlock.offsetLeft + userPinBlock.offsetWidth / 2);
 }
 
-function switchesForm(booleanTrigger) { // функция переключает состояние форм
+function toggleForm(booleanTrigger) { // функция переключает состояние форм
   mapBlock.classList.toggle('map--faded', booleanTrigger);
   adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
   mapAndFilterBlocks.forEach(function (current) {
@@ -216,15 +221,15 @@ function disableForms() { // функция выключает карту и ф�
   userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
   getUserAdvertisementAddress();
-  switchesForm(true);
+  toggleForm(true);
 }
 
 function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
   userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
   userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-  switchesForm(false);
-  getAdvertisements(quantity);
+  toggleForm(false);
+  getAdvertisements(QUANTITY);
 }
 
 function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
