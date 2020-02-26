@@ -14,7 +14,6 @@ var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 // var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
 var QUANTITY = 8;
-var advertisement = {};
 var advertisements = [];
 var userPinBlock = document.querySelector('.map__pin--main');
 var mapPinsBlock = document.querySelector('.map__pins');
