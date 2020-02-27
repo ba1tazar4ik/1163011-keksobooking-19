@@ -14,6 +14,7 @@ var PRICE_MULTIPLIER = 100;
 var MAX_ROOMS = 100;
 var MAX_GUESTS = 3;
 var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
+var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
 var QUANTITY = 8;
 var advertisements = [];
 var userPinBlock = document.querySelector('.map__pin--main');
@@ -25,18 +26,25 @@ var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
 var userAddressInput = document.querySelector('#address');
 var userRoomNumber = document.querySelector('#room_number');
 var userCapacity = document.querySelector('#capacity');
+var userPrice = document.querySelector('#price');
+var userOfferType = document.querySelector('#type');
 
 // НАЧАЛО ВАЛИДАЦИИ
 function validationUserCapacity() {
   userCapacity.setCustomValidity(
-    userCapacity.value > userRoomNumber.value ? ('В ' + userRoomNumber.value + ' комантах могут быть размещеные не более ' + userRoomNumber.value + ' гостей') : ('')
+      userCapacity.value > userRoomNumber.value ? ('В ' + userRoomNumber.value + ' комантах могут быть размещеные не более ' + userRoomNumber.value + ' гостей') : ('')
   );
+}
+function setupOfferMinCost() {
+  userPrice.setAttribute('placeholder', OFFER_MIN_COST[userOfferType.value]);
+  userPrice.setAttribute('min', OFFER_MIN_COST[userOfferType.value]);
 }
 function submitClickHandler(evt) {
   evt.preventDefault();
   validationUserCapacity();
   adFormBlock.requestSubmit(adFormSubmit);
 }
+userOfferType.addEventListener('change', setupOfferMinCost);
 adFormSubmit.addEventListener('click', submitClickHandler);
 // КОНЕЦ ВАЛИДАЦИИ
 
