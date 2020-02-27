@@ -20,6 +20,7 @@ var advertisements = [];
 var userPinBlock = document.querySelector('.map__pin--main');
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapBlock = document.querySelector('.map');
+var mapFiltersBlock = document.querySelector('.map__filters-container');
 var adFormBlock = document.querySelector('.ad-form');
 var adFormSubmit = document.querySelector('.ad-form__submit');
 var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
@@ -35,17 +36,17 @@ function validationUserCapacity() {
       userCapacity.value > userRoomNumber.value ? ('В ' + userRoomNumber.value + ' комантах могут быть размещеные не более ' + userRoomNumber.value + ' гостей') : ('')
   );
 }
+
 function setupOfferMinCost() {
-  userPrice.setAttribute('placeholder', OFFER_MIN_COST[userOfferType.value]);
-  userPrice.setAttribute('min', OFFER_MIN_COST[userOfferType.value]);
+  userPrice.placeholder = OFFER_MIN_COST[userOfferType.value];
+  userPrice.min = OFFER_MIN_COST[userOfferType.value];
 }
+
 function submitClickHandler(evt) {
   evt.preventDefault();
   validationUserCapacity();
   adFormBlock.requestSubmit(adFormSubmit);
 }
-userOfferType.addEventListener('change', setupOfferMinCost);
-adFormSubmit.addEventListener('click', submitClickHandler);
 // КОНЕЦ ВАЛИДАЦИИ
 
 function getRandomInteger(min, max) { // случайное целое число
@@ -124,12 +125,13 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   mapPin.style.cssText = 'left: ' + (ad.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ad.location.y - mapPinTemplate.offsetHeight) + 'px;';
   mapPinImg.src = ad.author.avatar;
   mapPinImg.alt = ad.offer.title;
-  mapPin.onclick = function () {
+  mapPin.addEventListener('click', function () {
     if (mapBlock.querySelector('.map__card')) {
       mapBlock.removeChild(mapBlock.querySelector('.map__card'));
     }
-    mapBlock.insertBefore(renderCard(ad), document.querySelector('.map__filters-container'));
-  };
+    mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
+    var mapCard = mapBlock.querySelector('.map__card');
+  });
   return mapPin;
 };
 
@@ -190,11 +192,11 @@ function renderCard(ad) { // получаем карточку объявлен�
   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
   renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
   mapCard.querySelector('.popup__close').onclick = function () {
-    mapBlock.removeChild(mapBlock.querySelector('.map__card'));
+    mapBlock.removeChild(mapCard);
   };
   document.addEventListener('keydown', function (evt) {
     if (evt.key === KEYCODE_ESCAPE) {
-      mapBlock.removeChild(mapBlock.querySelector('.map__card'));
+      mapBlock.removeChild(mapCard);
     }
   });
   return mapCard;
@@ -267,3 +269,5 @@ function userPinFirstKeyDownHandler(evt) { // функция запускает 
 
 // запускаем включение неактивного состояния сайта после его загрузки
 disableForms();
+userOfferType.addEventListener('change', setupOfferMinCost);
+adFormSubmit.addEventListener('click', submitClickHandler);
