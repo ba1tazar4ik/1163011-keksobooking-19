@@ -138,29 +138,36 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   mapPin.style.cssText = 'left: ' + (ad.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ad.location.y - mapPinTemplate.offsetHeight) + 'px;';
   mapPinImg.src = ad.author.avatar;
   mapPinImg.alt = ad.offer.title;
-  mapPin.addEventListener('click', function () {
-    if (mapCardBlock) {
-      mapBlock.removeChild(mapCardBlock);
-      mapCardBlock = null;
-    }
-    mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
-    mapCardBlock = mapBlock.querySelector('.map__card');
-    mapBlock.querySelector('.popup__close').addEventListener('click', function () {
-      mapBlock.removeChild(mapCardBlock);
-      mapCardBlock = null;
-    });
-    document.addEventListener('keydown', closePopupPhoto);
-    return mapCardBlock;
-  });
+  mapPin.addEventListener('click', mapPinClickHandler);
   return mapPin;
 };
+function mapPinClickHandler(ad) {
+  addMapCardBlock(ad);
+}
+
+function addMapCardBlock(ad) {
+  if (mapCardBlock) {
+    removeMapCardBlock();
+  }
+  mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
+  mapCardBlock = mapBlock.querySelector('.map__card');
+  mapBlock.querySelector('.popup__close').addEventListener('click', function () {
+    removeMapCardBlock();
+  });
+  document.addEventListener('keydown', closePopupPhoto);
+  return mapCardBlock;
+}
 
 function closePopupPhoto(evt) {
   if (evt.key === KEYCODE_ESCAPE) {
-    mapBlock.removeChild(mapCardBlock);
-    mapCardBlock = null;
+    removeMapCardBlock();
     document.removeEventListener('keydown', closePopupPhoto);
   }
+}
+
+function removeMapCardBlock() {
+  mapBlock.removeChild(mapCardBlock);
+  mapCardBlock = null;
 }
 
 function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
@@ -194,11 +201,10 @@ function renderCardPhotos(adPhoto, cardPhotosBlock) { // проверяем ка
       popupPhoto.src = adPhoto[i];
       fragment.appendChild(popupPhoto);
     }
-    cardPhotosBlock.appendChild(fragment);
   } else {
     cardPhotosBlock.classList.add('hidden');
   }
-  return cardPhotosBlock.innerHTML;
+  return fragment;
 }
 
 function renderCard(ad) { // получаем карточку объявления
@@ -213,7 +219,7 @@ function renderCard(ad) { // получаем карточку объявлен�
   mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   renderCardFeatures(ADVERTISEMENT_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
-  mapCard.querySelector('.popup__photos').innerHTML = renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
+  mapCard.querySelector('.popup__photos').appendChild(renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos')));
 
   return mapCard;
 }
