@@ -40,7 +40,7 @@ var userPrice = adFormBlock.querySelector('#price');
 var userOfferType = adFormBlock.querySelector('#type');
 var userTimeIn = adFormBlock.querySelector('#timein');
 var userTimeOut = adFormBlock.querySelector('#timeout');
-var mapCardBlock;
+var mapCardBlock = null;
 
 // НАЧАЛО ВАЛИДАЦИИ
 function validationUserCapacity() {
@@ -173,32 +173,32 @@ function generateAdvertisementPins(advertisementsQuantity) { // создаем �
   mapPinsBlock.appendChild(fragment);
 }
 
-function renderCardFeatures(adFeatures, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
+function renderCardFeatures(adFeatures, ad, cardFeaturesBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
   if (ad.length > 0) {
     for (var i = 0; i < adFeatures.length; i++) {
       if (!ad.includes(adFeatures[i])) {
-        mapCardBlock.querySelector('.popup__feature--' + adFeatures[i]).classList.add('hidden');
+        cardFeaturesBlock.querySelector('.popup__feature--' + adFeatures[i]).classList.add('hidden');
       }
     }
   } else {
-    mapCardBlock.classList.add('hidden');
+    cardFeaturesBlock.classList.add('hidden');
   }
 }
 
-function renderCardPhotos(adPhoto, mapCardBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
+function renderCardPhotos(adPhoto, cardPhotosBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
   if (adPhoto.length > 0) {
     var fragment = document.createDocumentFragment();
-    mapCardBlock.innerHTML = '';
+    cardPhotosBlock.innerHTML = '';
     for (var i = 0; i < adPhoto.length; i++) {
       var popupPhoto = popupPhotoTemplate.cloneNode(true);
       popupPhoto.src = adPhoto[i];
       fragment.appendChild(popupPhoto);
     }
-    mapCardBlock.appendChild(fragment);
+    cardPhotosBlock.appendChild(fragment);
   } else {
-    mapCardBlock.classList.add('hidden');
+    cardPhotosBlock.classList.add('hidden');
   }
-  return mapCardBlock.innerHTML;
+  return cardPhotosBlock.innerHTML;
 }
 
 function renderCard(ad) { // получаем карточку объявления
