@@ -186,7 +186,7 @@ function renderCardPhotos(adPhoto, mapCardBlock) { // проверяем как�
   } else {
     mapCardBlock.classList.add('hidden');
   }
-  return mapCardBlock;
+  return mapCardBlock.innerHTML;
 }
 
 function closePopupPhoto(evt) {
@@ -208,7 +208,8 @@ function renderCard(ad) { // получаем карточку объявлен�
   mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
   renderCardFeatures(ADVERTISEMENT_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
-  renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
+  mapCard.querySelector('.popup__photos').innerHTML = renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
+
   return mapCard;
 }
 
