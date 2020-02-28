@@ -17,18 +17,29 @@ var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'До
 var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
 var QUANTITY = 8;
 var advertisements = [];
-var userPinBlock = document.querySelector('.map__pin--main');
-var mapPinsBlock = document.querySelector('.map__pins');
 var mapBlock = document.querySelector('.map');
-var mapFiltersBlock = document.querySelector('.map__filters-container');
+var userPinBlock = mapBlock.querySelector('.map__pin--main');
+var mapPinsBlock = mapBlock.querySelector('.map__pins');
+var mapFiltersBlock = mapBlock.querySelector('.map__filters-container');
 var adFormBlock = document.querySelector('.ad-form');
-var adFormSubmit = document.querySelector('.ad-form__submit');
+var adFormSubmit = adFormBlock.querySelector('.ad-form__submit');
 var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
-var userAddressInput = document.querySelector('#address');
-var userRoomNumber = document.querySelector('#room_number');
-var userCapacity = document.querySelector('#capacity');
-var userPrice = document.querySelector('#price');
-var userOfferType = document.querySelector('#type');
+var mapPinTemplate = document.querySelector('#pin')
+  .content
+  .querySelector('.map__pin');
+var mapCardTemplate = document.querySelector('#card')
+  .content
+  .querySelector('.map__card');
+var popupPhotoTemplate = document.querySelector('#card')
+  .content
+  .querySelector('.popup__photo');
+var userAddressInput = adFormBlock.querySelector('#address');
+var userRoomNumber = adFormBlock.querySelector('#room_number');
+var userCapacity = adFormBlock.querySelector('#capacity');
+var userPrice = adFormBlock.querySelector('#price');
+var userOfferType = adFormBlock.querySelector('#type');
+var userTimeIn = adFormBlock.querySelector('#timein');
+var userTimeOut = adFormBlock.querySelector('#timeout');
 
 // НАЧАЛО ВАЛИДАЦИИ
 function validationUserCapacity() {
@@ -40,6 +51,10 @@ function validationUserCapacity() {
 function setupOfferMinCost() {
   userPrice.placeholder = OFFER_MIN_COST[userOfferType.value];
   userPrice.min = OFFER_MIN_COST[userOfferType.value];
+}
+
+function setupUserTime(firstTime, secondTime) {
+  secondTime.value = firstTime.value;
 }
 
 function submitClickHandler(evt) {
@@ -116,9 +131,6 @@ function generateAdvertisements(advertisementsQuantity) { // создаем ма
 }
 
 var renderPin = function (ad) { // рисуем шаблон метки на карте
-  var mapPinTemplate = document.querySelector('#pin')
-    .content
-    .querySelector('.map__pin');
   var mapPin = mapPinTemplate.cloneNode(true);
   var mapPinImg = mapPin.querySelector('img');
 
@@ -130,7 +142,11 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
       mapBlock.removeChild(mapBlock.querySelector('.map__card'));
     }
     mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
-    var mapCard = mapBlock.querySelector('.map__card');
+    mapCard = mapBlock.querySelector('.map__card');
+    mapCard.querySelector('.popup__close').addEventListener('click', function () {
+      mapBlock.removeChild(mapCard);
+    });
+    document.addEventListener('keydown', closePopupPhoto);
   });
   return mapPin;
 };
@@ -145,11 +161,11 @@ function generateAdvertisementPins(advertisementsQuantity) { // создаем �
   mapPinsBlock.appendChild(fragment);
 }
 
-function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
+function renderCardFeatures(adFeatures, ad, mapCardBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
   if (ad.length > 0) {
-    for (var i = 0; i < adf.length; i++) {
-      if (!ad.includes(adf[i])) {
-        mapCardBlock.querySelector('.popup__feature--' + adf[i]).classList.add('hidden');
+    for (var i = 0; i < adFeatures.length; i++) {
+      if (!ad.includes(adFeatures[i])) {
+        mapCardBlock.querySelector('.popup__feature--' + adFeatures[i]).classList.add('hidden');
       }
     }
   } else {
@@ -157,28 +173,30 @@ function renderCardFeatures(adf, ad, mapCardBlock) { // проверяем ка�
   }
 }
 
-function renderCardPhotos(ad, mapCardBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
-  if (ad.length > 0) {
+function renderCardPhotos(adPhoto, mapCardBlock) { // проверяем какие Photo у нас есть в объявлении и есть ли они вообще
+  if (adPhoto.length > 0) {
     var fragment = document.createDocumentFragment();
-    var popupPhotoTemplate = document.querySelector('#card')
-      .content
-      .querySelector('.popup__photo');
     mapCardBlock.innerHTML = '';
-    for (var i = 0; i < ad.length; i++) {
+    for (var i = 0; i < adPhoto.length; i++) {
       var popupPhoto = popupPhotoTemplate.cloneNode(true);
-      popupPhoto.src = ad[i];
+      popupPhoto.src = adPhoto[i];
       fragment.appendChild(popupPhoto);
     }
     mapCardBlock.appendChild(fragment);
   } else {
     mapCardBlock.classList.add('hidden');
   }
+  return mapCardBlock;
+}
+
+function closePopupPhoto(evt) {
+  if (evt.key === KEYCODE_ESCAPE) {
+    mapBlock.removeChild(mapCard);
+    document.removeEventListener('keydown', closePopupPhoto);
+  }
 }
 
 function renderCard(ad) { // получаем карточку объявления
-  var mapCardTemplate = document.querySelector('#card')
-    .content
-    .querySelector('.map__card');
   var mapCard = mapCardTemplate.cloneNode(true);
 
   mapCard.querySelector('.popup__avatar').src = ad.author.avatar;
@@ -191,14 +209,6 @@ function renderCard(ad) { // получаем карточку объявлен�
   renderCardFeatures(ADVERTISEMENT_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
   mapCard.querySelector('.popup__description').textContent = ad.offer.description;
   renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos'));
-  mapCard.querySelector('.popup__close').onclick = function () {
-    mapBlock.removeChild(mapCard);
-  };
-  document.addEventListener('keydown', function (evt) {
-    if (evt.key === KEYCODE_ESCAPE) {
-      mapBlock.removeChild(mapCard);
-    }
-  });
   return mapCard;
 }
 
@@ -250,6 +260,14 @@ function disableForms() { // функция выключает карту и ф�
 function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
   userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
   userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
+  userOfferType.addEventListener('change', setupOfferMinCost);
+  adFormSubmit.addEventListener('click', submitClickHandler);
+  userTimeIn.addEventListener('change', function () {
+    setupUserTime(userTimeIn, userTimeOut);
+  });
+  userTimeOut.addEventListener('change', function () {
+    setupUserTime(userTimeOut, userTimeIn);
+  });
 
   toggleForm(false);
   getAdvertisements(QUANTITY);
@@ -269,5 +287,3 @@ function userPinFirstKeyDownHandler(evt) { // функция запускает 
 
 // запускаем включение неактивного состояния сайта после его загрузки
 disableForms();
-userOfferType.addEventListener('change', setupOfferMinCost);
-adFormSubmit.addEventListener('click', submitClickHandler);
