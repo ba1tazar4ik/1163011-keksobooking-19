@@ -141,8 +141,8 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   mapPin.addEventListener('click', mapPinClickHandler);
   return mapPin;
 };
-function mapPinClickHandler(ad) {
-  addMapCardBlock(ad);
+function mapPinClickHandler() {
+  addMapCardBlock();
 }
 
 function addMapCardBlock(ad) {
@@ -151,9 +151,7 @@ function addMapCardBlock(ad) {
   }
   mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
   mapCardBlock = mapBlock.querySelector('.map__card');
-  mapBlock.querySelector('.popup__close').addEventListener('click', function () {
-    removeMapCardBlock();
-  });
+  mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
   document.addEventListener('keydown', closePopupPhoto);
   return mapCardBlock;
 }
@@ -203,6 +201,7 @@ function renderCardPhotos(adPhoto, cardPhotosBlock) { // проверяем ка
     }
   } else {
     cardPhotosBlock.classList.add('hidden');
+    fragment = popupPhotoTemplate;
   }
   return fragment;
 }
