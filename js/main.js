@@ -40,6 +40,7 @@ var userPrice = adFormBlock.querySelector('#price');
 var userOfferType = adFormBlock.querySelector('#type');
 var userTimeIn = adFormBlock.querySelector('#timein');
 var userTimeOut = adFormBlock.querySelector('#timeout');
+var mapCardBlock;
 
 // НАЧАЛО ВАЛИДАЦИИ
 function validationUserCapacity() {
@@ -138,18 +139,29 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   mapPinImg.src = ad.author.avatar;
   mapPinImg.alt = ad.offer.title;
   mapPin.addEventListener('click', function () {
-    if (mapBlock.querySelector('.map__card')) {
-      mapBlock.removeChild(mapBlock.querySelector('.map__card'));
+    if (mapCardBlock) {
+      mapBlock.removeChild(mapCardBlock);
+      mapCardBlock = null;
     }
     mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
-    mapCard = mapBlock.querySelector('.map__card');
-    mapCard.querySelector('.popup__close').addEventListener('click', function () {
-      mapBlock.removeChild(mapCard);
+    mapCardBlock = mapBlock.querySelector('.map__card');
+    mapBlock.querySelector('.popup__close').addEventListener('click', function () {
+      mapBlock.removeChild(mapCardBlock);
+      mapCardBlock = null;
     });
     document.addEventListener('keydown', closePopupPhoto);
+    return mapCardBlock;
   });
   return mapPin;
 };
+
+function closePopupPhoto(evt) {
+  if (evt.key === KEYCODE_ESCAPE) {
+    mapBlock.removeChild(mapCardBlock);
+    mapCardBlock = null;
+    document.removeEventListener('keydown', closePopupPhoto);
+  }
+}
 
 function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
   var fragment = document.createDocumentFragment();
@@ -187,13 +199,6 @@ function renderCardPhotos(adPhoto, mapCardBlock) { // проверяем как�
     mapCardBlock.classList.add('hidden');
   }
   return mapCardBlock.innerHTML;
-}
-
-function closePopupPhoto(evt) {
-  if (evt.key === KEYCODE_ESCAPE) {
-    mapBlock.removeChild(mapCard);
-    document.removeEventListener('keydown', closePopupPhoto);
-  }
 }
 
 function renderCard(ad) { // получаем карточку объявления
