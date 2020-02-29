@@ -138,28 +138,27 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
   mapPin.style.cssText = 'left: ' + (ad.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ad.location.y - mapPinTemplate.offsetHeight) + 'px;';
   mapPinImg.src = ad.author.avatar;
   mapPinImg.alt = ad.offer.title;
-  mapPin.addEventListener('click', mapPinClickHandler);
+  mapPin.addEventListener('click', function () {
+    openPopupMapCard(ad);
+  });
   return mapPin;
 };
-function mapPinClickHandler() {
-  addMapCardBlock();
-}
 
-function addMapCardBlock(ad) {
+function openPopupMapCard(ad) {
   if (mapCardBlock) {
     removeMapCardBlock();
   }
   mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
   mapCardBlock = mapBlock.querySelector('.map__card');
   mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
-  document.addEventListener('keydown', closePopupPhoto);
+  document.addEventListener('keydown', closePopupMapCard);
   return mapCardBlock;
 }
 
-function closePopupPhoto(evt) {
+function closePopupMapCard(evt) {
   if (evt.key === KEYCODE_ESCAPE) {
     removeMapCardBlock();
-    document.removeEventListener('keydown', closePopupPhoto);
+    document.removeEventListener('keydown', closePopupMapCard);
   }
 }
 
