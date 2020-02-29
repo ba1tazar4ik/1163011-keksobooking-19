@@ -145,9 +145,7 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
 };
 
 function openPopupMapCard(ad) {
-  if (mapCardBlock) {
-    removeMapCardBlock();
-  }
+  removeMapCardBlock();
   mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
   mapCardBlock = mapBlock.querySelector('.map__card');
   mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
@@ -163,8 +161,10 @@ function closePopupMapCard(evt) {
 }
 
 function removeMapCardBlock() {
-  mapBlock.removeChild(mapCardBlock);
-  mapCardBlock = null;
+  if (mapCardBlock) {
+    mapBlock.removeChild(mapCardBlock);
+    mapCardBlock = null;
+  }
 }
 
 function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
