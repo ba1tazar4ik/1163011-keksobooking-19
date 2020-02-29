@@ -145,7 +145,9 @@ var renderPin = function (ad) { // рисуем шаблон метки на к�
 };
 
 function openPopupMapCard(ad) {
-  removeMapCardBlock();
+  if (mapCardBlock) {
+    removeMapCardBlock();
+  }
   mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
   mapCardBlock = mapBlock.querySelector('.map__card');
   mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
@@ -161,10 +163,9 @@ function closePopupMapCard(evt) {
 }
 
 function removeMapCardBlock() {
-  if (mapCardBlock) {
-    mapBlock.removeChild(mapCardBlock);
-    mapCardBlock = null;
-  }
+  mapBlock.removeChild(mapCardBlock);
+  mapCardBlock = null;
+  document.removeEventListener('keydown', closePopupMapCard);
 }
 
 function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
@@ -281,6 +282,7 @@ function activateForm() { // фнукция активирует форму, п�
 
   toggleForm(false);
   getAdvertisements(QUANTITY);
+  setupOfferMinCost();
 }
 
 function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
