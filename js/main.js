@@ -158,7 +158,6 @@ function openPopupMapCard(ad) {
 function closePopupMapCard(evt) {
   if (evt.key === KEYCODE_ESCAPE) {
     removeMapCardBlock();
-    document.removeEventListener('keydown', closePopupMapCard);
   }
 }
 
