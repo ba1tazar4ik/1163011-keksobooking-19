@@ -1,15 +1,6 @@
 // eslint-disable-next-line strict
 (function () {
-  function getRandomInteger(min, max) { // случайное целое число
-    // случайное число от min до (max+1)
-    var randomNumber = min + Math.random() * (max + 1 - min);
-    return Math.floor(randomNumber);
-  }
 
-  function getArrayRandomElement(array) { // случайный элемент масива
-    var randomNumber = Math.floor(Math.random() * array.length);
-    return array[randomNumber];
-  }
 
   function shuffle(array) { // перемешиваем массив
     var j;
@@ -25,9 +16,22 @@
     return array;
   }
 
-  function getArrayRandomLength(array) { // массив случайной длинны заполненный случайными данными
-    var shuffleArray = shuffle(array);
-    return shuffleArray.slice(0, getRandomInteger(0, shuffleArray.length));
-  }
-
+  window.util = {
+    getRandomInteger:
+      function getRandomInteger(min, max) { // случайное целое число
+        // случайное число от min до (max+1)
+        var randomNumber = min + Math.random() * (max + 1 - min);
+        return Math.floor(randomNumber);
+      },
+    getArrayRandomElement:
+      function (array) { // случайный элемент масива
+        var randomNumber = Math.floor(Math.random() * array.length);
+        return array[randomNumber];
+      },
+    getArrayRandomLength:
+      function (array) { // массив случайной длинны заполненный случайными данными
+        var shuffleArray = shuffle(array);
+        return shuffleArray.slice(0, window.util.getRandomInteger(0, shuffleArray.length));
+      }
+  };
 })();
