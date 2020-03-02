@@ -1,5 +1,8 @@
 // eslint-disable-next-line strict
 (function () {
+  var mapPinTemplate = document.querySelector('#pin')
+    .content
+    .querySelector('.map__pin');
   var renderPin = function (ad) { // рисуем шаблон метки на карте
     var mapPin = mapPinTemplate.cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
@@ -8,18 +11,18 @@
     mapPinImg.src = ad.author.avatar;
     mapPinImg.alt = ad.offer.title;
     mapPin.addEventListener('click', function () {
-      openPopupMapCard(ad);
+      window.card(ad);
     });
     return mapPin;
   };
 
-  function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
+  window.pin = function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < advertisementsQuantity; i++) {
-      fragment.appendChild(renderPin(advertisements[i]));
+      fragment.appendChild(renderPin(window.globalVariables.advertisements[i]));
     }
 
-    mapPinsBlock.appendChild(fragment);
-  }
+    window.globalVariables.mapPinsBlock.appendChild(fragment);
+  };
 })();
