@@ -1,23 +1,26 @@
-// eslint-disable-next-line strict
+'use strict';
 (function () {
+  var KEYCODE_ESCAPE = 'Escape';
   var OFFER_TYPE = {flat: 'Квартира', palace: 'Дворец', house: 'Дом', bungalo: 'Бунгало'};
+  var ADVERTISEMENT_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var popupPhotoTemplate = document.querySelector('#card')
     .content
     .querySelector('.popup__photo');
   var mapCardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
-  var mapFiltersBlock = window.globalVariables.mapBlock.querySelector('.map__filters-container');
+  var mapBlock = document.querySelector('.map');
+  var mapFiltersBlock = mapBlock.querySelector('.map__filters-container');
   var mapCardBlock = null;
 
   function closePopupMapCard(evt) {
-    if (evt.key === window.globalVariables.keycodeEscape) {
+    if (evt.key === KEYCODE_ESCAPE) {
       removeMapCardBlock();
     }
   }
 
   function removeMapCardBlock() {
-    window.globalVariables.mapBlock.removeChild(mapCardBlock);
+    mapBlock.removeChild(mapCardBlock);
     mapCardBlock = null;
     document.removeEventListener('keydown', closePopupMapCard);
   }
@@ -60,21 +63,25 @@
     mapCard.querySelector('.popup__type').textContent = OFFER_TYPE[ad.offer.type];
     mapCard.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     mapCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
-    renderCardFeatures(window.globalVariables.advertisementFeatures, ad.offer.features, mapCard.querySelector('.popup__features'));
+    renderCardFeatures(ADVERTISEMENT_FEATURES, ad.offer.features, mapCard.querySelector('.popup__features'));
     mapCard.querySelector('.popup__description').textContent = ad.offer.description;
     mapCard.querySelector('.popup__photos').appendChild(renderCardPhotos(ad.offer.photos, mapCard.querySelector('.popup__photos')));
 
     return mapCard;
   }
 
-  window.card = function openPopupMapCard(ad) {
+  function openPopupMapCard(ad) {
     if (mapCardBlock) {
       removeMapCardBlock();
     }
-    window.globalVariables.mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
-    mapCardBlock = window.globalVariables.mapBlock.querySelector('.map__card');
-    window.globalVariables.mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
+    mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
+    mapCardBlock = mapBlock.querySelector('.map__card');
+    mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
     document.addEventListener('keydown', closePopupMapCard);
     return mapCardBlock;
+  }
+
+  window.card = {
+    open: openPopupMapCard
   };
 })();
