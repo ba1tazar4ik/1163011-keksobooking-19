@@ -31,7 +31,7 @@
   }
 
   window.utils = {
-    randomInteger: getRandomInteger,
+    getRandomInteger: getRandomInteger,
     getArrayRandomElement: getArrayRandomElement,
     getArrayRandomLength: getArrayRandomLength
   };

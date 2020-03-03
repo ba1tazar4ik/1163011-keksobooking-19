@@ -18,8 +18,8 @@
 
 
   function generateAdvertisement(index) { // создаем объект обьявления
-    var locationX = window.utils.randomInteger(0, mapPinsBlock.offsetWidth);
-    var locationY = window.utils.randomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
+    var locationX = window.utils.getRandomInteger(0, mapPinsBlock.offsetWidth);
+    var locationY = window.utils.getRandomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
 
     return {
       author: {
@@ -28,10 +28,10 @@
       offer: {
         title: window.utils.getArrayRandomElement(ADVERTISEMENT_TITLES),
         address: locationX + ',' + locationY,
-        price: window.utils.randomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
+        price: window.utils.getRandomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
         type: window.utils.getArrayRandomElement(ADVERTISEMENT_TYPES),
-        rooms: window.utils.randomInteger(1, MAX_ROOMS),
-        guests: window.utils.randomInteger(0, MAX_GUESTS),
+        rooms: window.utils.getRandomInteger(1, MAX_ROOMS),
+        guests: window.utils.getRandomInteger(0, MAX_GUESTS),
         checkin: window.utils.getArrayRandomElement(ADVERTISEMENT_CHECKS),
         checkout: window.utils.getArrayRandomElement(ADVERTISEMENT_CHECKS),
         features: window.utils.getArrayRandomLength(ADVERTISEMENT_FEATURES),

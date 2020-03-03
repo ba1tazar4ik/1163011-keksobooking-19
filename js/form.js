@@ -10,6 +10,8 @@
   var userAddressInput = adFormBlock.querySelector('#address');
   var userPrice = adFormBlock.querySelector('#price');
   var userOfferType = adFormBlock.querySelector('#type');
+  var userTimeIn = adFormBlock.querySelector('#timein');
+  var userTimeOut = adFormBlock.querySelector('#timeout');
 
 
   function validationUserCapacity() {
@@ -49,12 +51,23 @@
     validationUserCapacity();
     adFormBlock.requestSubmit(adFormSubmit);
   }
+
+  function startValidationForm() {
+    userOfferType.addEventListener('change', setupOfferMinCost);
+    adFormSubmit.addEventListener('click', window.form.submitHandler);
+    userTimeIn.addEventListener('change', function () {
+      setupUserTime(userTimeIn, userTimeOut);
+    });
+    userTimeOut.addEventListener('change', function () {
+      setupUserTime(userTimeOut, userTimeIn);
+    });
+
+    setupOfferMinCost();
+  }
   window.form = {
-    adFormBlock: adFormBlock,
     toggle: toggleForm,
     getUserAddress: getUserAdvertisementAddress,
-    setupMinCost: setupOfferMinCost,
-    setupUserTime: setupUserTime,
-    submitHandler: submitClickHandler
+    submitHandler: submitClickHandler,
+    startValidation: startValidationForm
   };
 })();

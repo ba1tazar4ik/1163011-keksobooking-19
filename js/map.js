@@ -3,14 +3,20 @@
   var KEYCODE_ENTER = 'Enter';
   var QUANTITY = 8;
   var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
-  var userTimeIn = window.form.adFormBlock.querySelector('#timein');
-  var userTimeOut = window.form.adFormBlock.querySelector('#timeout');
-  var userOfferType = window.form.adFormBlock.querySelector('#type');
-  var adFormSubmit = window.form.adFormBlock.querySelector('.ad-form__submit');
+
+  function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
+    var fragment = document.createDocumentFragment();
+
+    for (var i = 0; i < advertisementsQuantity; i++) {
+      fragment.appendChild(window.pin.render(window.data.advertisements[i]));
+    }
+
+    window.data.mapPinsBlock.appendChild(fragment);
+  }
 
   function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
     window.data.generate(advertisementsQuantity);
-    window.pin.generate(advertisementsQuantity);
+    generateAdvertisementPins(advertisementsQuantity);
   }
 
   function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
@@ -52,18 +58,10 @@
   function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
-    userOfferType.addEventListener('change', window.form.setupMinCost);
-    adFormSubmit.addEventListener('click', window.form.submitHandler);
-    userTimeIn.addEventListener('change', function () {
-      window.form.setupUserTime(userTimeIn, userTimeOut);
-    });
-    userTimeOut.addEventListener('change', function () {
-      window.form.setupUserTime(userTimeOut, userTimeIn);
-    });
 
-    window.form.toggle(false);
     getAdvertisements(QUANTITY);
-    window.form.setupMinCost();
+    window.form.startValidation();
+    window.form.toggle(false);
   }
 
   // запускаем включение неактивного состояния сайта после его загрузки
