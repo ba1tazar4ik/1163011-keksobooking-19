@@ -18,25 +18,25 @@
 
 
   function generateAdvertisement(index) { // создаем объект обьявления
-    var locationX = window.util.randomInteger(0, mapPinsBlock.offsetWidth);
-    var locationY = window.util.randomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
+    var locationX = window.utils.randomInteger(0, mapPinsBlock.offsetWidth);
+    var locationY = window.utils.randomInteger(MIN_LOCATION_Y, MAX_LOCATION_Y);
 
     return {
       author: {
         avatar: 'img/avatars/user0' + (index + 1) + '.png',
       },
       offer: {
-        title: window.util.arrayRandomElement(ADVERTISEMENT_TITLES),
+        title: window.utils.getArrayRandomElement(ADVERTISEMENT_TITLES),
         address: locationX + ',' + locationY,
-        price: window.util.randomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
-        type: window.util.arrayRandomElement(ADVERTISEMENT_TYPES),
-        rooms: window.util.randomInteger(1, MAX_ROOMS),
-        guests: window.util.randomInteger(0, MAX_GUESTS),
-        checkin: window.util.arrayRandomElement(ADVERTISEMENT_CHECKS),
-        checkout: window.util.arrayRandomElement(ADVERTISEMENT_CHECKS),
-        features: window.util.arrayRandomLength(ADVERTISEMENT_FEATURES),
-        description: window.util.arrayRandomLength(ADVERTISING_DESCRIPTIONS).join('. '),
-        photos: window.util.arrayRandomLength(ADVERTISEMENT_PHOTOS),
+        price: window.utils.randomInteger(1, MAX_PRICE_MULTIPLIER) * PRICE_MULTIPLIER,
+        type: window.utils.getArrayRandomElement(ADVERTISEMENT_TYPES),
+        rooms: window.utils.randomInteger(1, MAX_ROOMS),
+        guests: window.utils.randomInteger(0, MAX_GUESTS),
+        checkin: window.utils.getArrayRandomElement(ADVERTISEMENT_CHECKS),
+        checkout: window.utils.getArrayRandomElement(ADVERTISEMENT_CHECKS),
+        features: window.utils.getArrayRandomLength(ADVERTISEMENT_FEATURES),
+        description: window.utils.getArrayRandomLength(ADVERTISING_DESCRIPTIONS).join('. '),
+        photos: window.utils.getArrayRandomLength(ADVERTISEMENT_PHOTOS),
       },
       location: {
         x: locationX,
@@ -54,6 +54,9 @@
   }
   window.data = {
     generate: generateAdvertisements,
-    advertisements: advertisements
+    ADVERTISEMENT_FEATURES: ADVERTISEMENT_FEATURES,
+    advertisements: advertisements,
+    mapBlock: mapBlock,
+    mapPinsBlock: mapPinsBlock
   };
 })();

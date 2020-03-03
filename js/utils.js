@@ -30,9 +30,9 @@
     return shuffleArray.slice(0, getRandomInteger(0, shuffleArray.length));
   }
 
-  window.util = {
+  window.utils = {
     randomInteger: getRandomInteger,
-    arrayRandomElement: getArrayRandomElement,
-    arrayRandomLength: getArrayRandomLength
+    getArrayRandomElement: getArrayRandomElement,
+    getArrayRandomLength: getArrayRandomLength
   };
 })();

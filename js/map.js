@@ -2,14 +2,11 @@
 (function () {
   var KEYCODE_ENTER = 'Enter';
   var QUANTITY = 8;
-  var mapBlock = document.querySelector('.map');
-  var userPinBlock = mapBlock.querySelector('.map__pin--main');
-  var mapPinsBlock = mapBlock.querySelector('.map__pins');
-  var adFormBlock = document.querySelector('.ad-form');
-  var userTimeIn = adFormBlock.querySelector('#timein');
-  var userTimeOut = adFormBlock.querySelector('#timeout');
-  var userOfferType = adFormBlock.querySelector('#type');
-  var adFormSubmit = adFormBlock.querySelector('.ad-form__submit');
+  var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
+  var userTimeIn = window.form.adFormBlock.querySelector('#timein');
+  var userTimeOut = window.form.adFormBlock.querySelector('#timeout');
+  var userOfferType = window.form.adFormBlock.querySelector('#type');
+  var adFormSubmit = window.form.adFormBlock.querySelector('.ad-form__submit');
 
   function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
     window.data.generate(advertisementsQuantity);
@@ -17,16 +14,16 @@
   }
 
   function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    window.form.userAddress();
+    window.form.getUserAddress();
   }
 
   function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
-    mapPinsBlock.addEventListener('mousemove', mapPinMouseMoveHandler);
+    window.data.mapPinsBlock.addEventListener('mousemove', mapPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
-    mapPinsBlock.removeEventListener('mousemove', mapPinMouseMoveHandler);
+    window.data.mapPinsBlock.removeEventListener('mousemove', mapPinMouseMoveHandler);
     document.removeEventListener('mouseup', userPinMouseUpHandler);
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
@@ -36,7 +33,7 @@
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
     userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.form.userAddress();
+    window.form.getUserAddress();
     window.form.toggle(true);
   }
 
@@ -55,18 +52,18 @@
   function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
-    userOfferType.addEventListener('change', window.form.minCost);
+    userOfferType.addEventListener('change', window.form.setupMinCost);
     adFormSubmit.addEventListener('click', window.form.submitHandler);
     userTimeIn.addEventListener('change', function () {
-      window.form.userTime(userTimeIn, userTimeOut);
+      window.form.setupUserTime(userTimeIn, userTimeOut);
     });
     userTimeOut.addEventListener('change', function () {
-      window.form.userTime(userTimeOut, userTimeIn);
+      window.form.setupUserTime(userTimeOut, userTimeIn);
     });
 
     window.form.toggle(false);
     getAdvertisements(QUANTITY);
-    window.form.minCost();
+    window.form.setupMinCost();
   }
 
   // запускаем включение неактивного состояния сайта после его загрузки

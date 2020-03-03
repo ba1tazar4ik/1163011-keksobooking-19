@@ -3,8 +3,6 @@
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
-  var mapBlock = document.querySelector('.map');
-  var mapPinsBlock = mapBlock.querySelector('.map__pins');
   var renderPin = function (ad) { // рисуем шаблон метки на карте
     var mapPin = mapPinTemplate.cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
@@ -25,7 +23,7 @@
       fragment.appendChild(renderPin(window.data.advertisements[i]));
     }
 
-    mapPinsBlock.appendChild(fragment);
+    window.data.mapPinsBlock.appendChild(fragment);
   }
 
   window.pin = {
