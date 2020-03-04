@@ -53,10 +53,12 @@
     return advertisements;
   }
   window.data = {
-    generate: generateAdvertisements,
+    MIN_LOCATION_Y: MIN_LOCATION_Y,
+    MAX_LOCATION_Y: MAX_LOCATION_Y,
     ADVERTISEMENT_FEATURES: ADVERTISEMENT_FEATURES,
     advertisements: advertisements,
     mapBlock: mapBlock,
-    mapPinsBlock: mapPinsBlock
+    mapPinsBlock: mapPinsBlock,
+    generate: generateAdvertisements
   };
 })();
