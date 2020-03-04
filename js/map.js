@@ -2,6 +2,8 @@
 (function () {
   var KEYCODE_ENTER = 'Enter';
   var QUANTITY = 8;
+  var startCoords = {};
+  var shift = {};
   var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
 
   function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
@@ -19,17 +21,58 @@
     generateAdvertisementPins(advertisementsQuantity);
   }
 
-  function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    window.form.getUserAddress();
+  function getUserPinBlockCoords(evt) {
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
   }
 
-  function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
-    window.data.mapPinsBlock.addEventListener('mousemove', mapPinMouseMoveHandler);
+  function onMouseMove(moveEvt) {
+    shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    setUserPinBlockCoords();
+  }
+
+  function setUserPinBlockCoords() {
+    if (userPinBlock.offsetTop < 130) {
+      userPinBlock.style.top = (130 - userPinBlock.offsetHeight) + 'px';
+    } else if (userPinBlock.offsetTop > 630) {
+      userPinBlock.style.top = (630 - userPinBlock.offsetHeight) + 'px';
+    } else {
+      userPinBlock.style.top = (userPinBlock.offsetTop - shift.y) + 'px';
+    }
+
+    if (userPinBlock.offsetLeft < 0) {
+      userPinBlock.style.left = (0 - userPinBlock.offsetWidth / 2) + 'px';
+    } else if (userPinBlock.offsetLeft > window.data.mapPinsBlock.offsetWidth) {
+      userPinBlock.style.left = (window.data.mapPinsBlock.offsetWidth - userPinBlock.offsetWidth / 2) + 'px'
+    } else {
+      userPinBlock.style.left = (userPinBlock.offsetLeft - shift.x) + 'px';
+    }
+  }
+
+  function mapPinMouseMoveHandler(moveEvt) { // функция заполняет инпут с адресом координатами острой части метки
+    window.form.getUserAddress();
+    onMouseMove(moveEvt);
+  }
+
+  function userPinMouseDownHandler(evt) { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
+    getUserPinBlockCoords(evt);
+    document.addEventListener('mousemove', mapPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
-    window.data.mapPinsBlock.removeEventListener('mousemove', mapPinMouseMoveHandler);
+    document.removeEventListener('mousemove', mapPinMouseMoveHandler);
     document.removeEventListener('mouseup', userPinMouseUpHandler);
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
