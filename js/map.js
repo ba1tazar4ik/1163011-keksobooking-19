@@ -54,8 +54,8 @@
 
     if (userPinBlock.offsetLeft < userPinBlock.offsetWidth / 2) {
       userPinBlock.style.left = userPinBlock.offsetWidth / 2 + 'px';
-    } else if (userPinBlock.offsetLeft > MAX_LOCATION_X - userPinBlock.offsetWidth / 2) {
-      userPinBlock.style.left = (MAX_LOCATION_X - userPinBlock.offsetWidth / 2) + 'px';
+    } else if (userPinBlock.offsetLeft > MAX_LOCATION_X - Math.floor(userPinBlock.offsetWidth / 2)) {
+      userPinBlock.style.left = (MAX_LOCATION_X - Math.floor(userPinBlock.offsetWidth / 2)) + 'px';
     } else {
       userPinBlock.style.left = (userPinBlock.offsetLeft - shift.x) + 'px';
     }
