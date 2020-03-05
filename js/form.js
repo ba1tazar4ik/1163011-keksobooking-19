@@ -66,7 +66,7 @@
     setupOfferMinCost();
   }
   window.form = {
-    USER_PIN_STING_HEIGHT: USER_PIN_TAIL_HEIGHT,
+    USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
     toggle: toggleForm,
     getUserAddress: getUserAdvertisementAddress,
     startValidation: startValidationForm

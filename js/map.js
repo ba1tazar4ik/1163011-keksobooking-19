@@ -59,7 +59,7 @@
         y: moveEvt.clientY,
       };
 
-      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + window.form.USER_PIN_STING_HEIGHT;
+      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + window.form.USER_PIN_TAIL_HEIGHT;
       var top = userPinBlock.offsetTop - shift.y;
       var minTop = window.data.MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
       var maxTop = window.data.MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
