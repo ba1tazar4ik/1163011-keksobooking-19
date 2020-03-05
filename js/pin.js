@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var MAP_PIN_WIDTH = 50;
+  var MAP_PIN_HEIGHT = 70;
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
@@ -7,7 +9,7 @@
     var mapPin = mapPinTemplate.cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
 
-    mapPin.style.cssText = 'left: ' + (ad.location.x - mapPinTemplate.offsetWidth / 2) + 'px; top: ' + (ad.location.y - mapPinTemplate.offsetHeight) + 'px;';
+    mapPin.style.cssText = 'left: ' + (ad.location.x - MAP_PIN_WIDTH / 2) + 'px; top: ' + (ad.location.y - MAP_PIN_HEIGHT) + 'px;';
     mapPinImg.src = ad.author.avatar;
     mapPinImg.alt = ad.offer.title;
     mapPin.addEventListener('click', function () {
