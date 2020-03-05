@@ -27,64 +27,56 @@
     generateAdvertisementPins(advertisementsQuantity);
   }
 
-  (function () {
-    userPinBlock.addEventListener('mousedown', function (evt) {
-      startCoords = {
-        x: evt.clientX,
-        y: evt.clientY
-      };
+  function getUserPinCoords(evt) {
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+  }
 
-      var onMouseMove = function (moveEvt) {
-        shift = {
-          x: startCoords.x - moveEvt.clientX,
-          y: startCoords.y - moveEvt.clientY
-        };
+  function moveUserPin(evt) {
+    shift = {
+      x: startCoords.x - evt.clientX,
+      y: startCoords.y - evt.clientY
+    };
 
-        startCoords = {
-          x: moveEvt.clientX,
-          y: moveEvt.clientY
-        };
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
 
-        if (startCoords.y < minCoordsY) {
-          topCoords = (window.data.MIN_LOCATION_Y - userPinBlock.offsetHeight) + 'px';
-        } else if (startCoords.y > maxCoordsY) {
-          topCoords = (window.data.MAX_LOCATION_Y - userPinBlock.offsetHeight) + 'px';
-        } else {
-          topCoords = (userPinBlock.offsetTop - shift.y) + 'px';
-        }
+    setNewUserPinCoords();
+  }
 
-        if (startCoords.x < minCoordsX) {
-          leftCoords = (0 - Math.floor(userPinBlock.offsetWidth / 2)) + 'px';
-        } else if (startCoords.x > maxCoordsX) {
-          leftCoords = Math.floor(window.data.mapPinsBlock.offsetWidth - userPinBlock.offsetWidth / 2) + 'px';
-        } else {
-          leftCoords = (userPinBlock.offsetLeft - shift.x) + 'px';
-        }
-        userPinBlock.style.top = topCoords;
-        userPinBlock.style.left = leftCoords;
+  function setNewUserPinCoords() {
+    if (startCoords.y < minCoordsY) {
+      topCoords = (window.data.MIN_LOCATION_Y - userPinBlock.offsetHeight);
+    } else if (startCoords.y > maxCoordsY) {
+      topCoords = (window.data.MAX_LOCATION_Y - userPinBlock.offsetHeight);
+    } else {
+      topCoords = (userPinBlock.offsetTop - shift.y);
+    }
 
-      };
+    if (startCoords.x < minCoordsX) {
+      leftCoords = (0 - Math.floor(userPinBlock.offsetWidth / 2));
+    } else if (startCoords.x > maxCoordsX) {
+      leftCoords = Math.floor(window.data.mapPinsBlock.offsetWidth - userPinBlock.offsetWidth / 2);
+    } else {
+      leftCoords = (userPinBlock.offsetLeft - shift.x);
+    }
+    userPinBlock.style.top = topCoords + 'px';
+    userPinBlock.style.left = leftCoords + 'px';
+  }
 
-      var onMouseUp = function () {
-
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-      };
-
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    });
-
-
-  })();
-
-  function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
+  function mapPinMouseMoveHandler(evt) { // функция заполняет инпут с адресом координатами острой части метки
+    moveUserPin(evt);
     window.form.getUserAddress();
   }
 
-  function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
+  function userPinMouseDownHandler(evt) { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
     document.addEventListener('mousemove', mapPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
+    getUserPinCoords(evt);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
