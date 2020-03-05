@@ -2,15 +2,10 @@
 (function () {
   var KEYCODE_ENTER = 'Enter';
   var QUANTITY = 8;
-  var topCoords;
-  var leftCoords;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
-  var minCoordsY = Math.floor(userPinBlock.parentNode.getBoundingClientRect().y) + window.data.MIN_LOCATION_Y - userPinBlock.offsetHeight;
-  var maxCoordsY = Math.floor(userPinBlock.parentNode.getBoundingClientRect().y) + window.data.MAX_LOCATION_Y - userPinBlock.offsetHeight;
-  var minCoordsX = Math.floor(userPinBlock.parentNode.getBoundingClientRect().x) - Math.floor(userPinBlock.offsetWidth / 2);
-  var maxCoordsX = Math.floor(userPinBlock.parentNode.getBoundingClientRect().x + window.data.mapPinsBlock.offsetWidth - userPinBlock.offsetWidth / 2);
+  var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
 
   function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
     var fragment = document.createDocumentFragment();
@@ -27,56 +22,13 @@
     generateAdvertisementPins(advertisementsQuantity);
   }
 
-  function getUserPinCoords(evt) {
-    startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-  }
-
-  function moveUserPin(evt) {
-    shift = {
-      x: startCoords.x - evt.clientX,
-      y: startCoords.y - evt.clientY
-    };
-
-    startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-
-    setNewUserPinCoords();
-  }
-
-  function setNewUserPinCoords() {
-    if (startCoords.y < minCoordsY) {
-      topCoords = (window.data.MIN_LOCATION_Y - userPinBlock.offsetHeight);
-    } else if (startCoords.y > maxCoordsY) {
-      topCoords = (window.data.MAX_LOCATION_Y - userPinBlock.offsetHeight);
-    } else {
-      topCoords = (userPinBlock.offsetTop - shift.y);
-    }
-
-    if (startCoords.x < minCoordsX) {
-      leftCoords = (0 - Math.floor(userPinBlock.offsetWidth / 2));
-    } else if (startCoords.x > maxCoordsX) {
-      leftCoords = Math.floor(window.data.mapPinsBlock.offsetWidth - userPinBlock.offsetWidth / 2);
-    } else {
-      leftCoords = (userPinBlock.offsetLeft - shift.x);
-    }
-    userPinBlock.style.top = topCoords + 'px';
-    userPinBlock.style.left = leftCoords + 'px';
-  }
-
-  function mapPinMouseMoveHandler(evt) { // функция заполняет инпут с адресом координатами острой части метки
-    moveUserPin(evt);
+  function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
     window.form.getUserAddress();
   }
 
-  function userPinMouseDownHandler(evt) { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
+  function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
     document.addEventListener('mousemove', mapPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
-    getUserPinCoords(evt);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
@@ -84,6 +36,71 @@
     document.removeEventListener('mouseup', userPinMouseUpHandler);
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
+
+  userPinBlock.addEventListener('mousedown', function (evt) {
+    startCoords = {
+      x: evt.clientX,
+      y: evt.clientY,
+    };
+
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      dragged = true;
+
+      shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY,
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY,
+      };
+
+      var top = userPinBlock.offsetTop - shift.y;
+      var minTop = window.data.MIN_LOCATION_Y - userPinBlock.offsetHeight;
+      var maxTop = window.data.MAX_LOCATION_Y - userPinBlock.offsetHeight;
+      var left = userPinBlock.offsetLeft - shift.x;
+      var maxLeft = window.data.mapPinsBlock.offsetWidth - halfUserPinWidth;
+
+      if (top <= minTop) {
+        top = minTop;
+      } else if (top >= maxTop) {
+        top = maxTop;
+      }
+
+      if (left <= 0 - halfUserPinWidth) {
+        left = -halfUserPinWidth;
+      } else if (left >= maxLeft) {
+        left = maxLeft;
+      }
+
+      userPinBlock.style.top = top + 'px';
+      userPinBlock.style.left = left + 'px';
+
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      if (dragged) {
+        var onClickPreventDefault = function (clickEvt) {
+          clickEvt.preventDefault();
+          userPinBlock.removeEventListener('click', onClickPreventDefault);
+        };
+        userPinBlock.addEventListener('click', onClickPreventDefault);
+      }
+
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   function disableForms() { // функция выключает карту и формы
     userPinBlock.addEventListener('mousedown', userPinFirstMouseDownHandler);
