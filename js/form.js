@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
-  var USER_PIN_STING_HEIGHT = 15;
+  var USER_PIN_TAIL_HEIGHT = 15;
   var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
   var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
   var adFormBlock = document.querySelector('.ad-form');
@@ -35,7 +35,7 @@
   }
 
   function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
-    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_STING_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + Math.floor(userPinBlock.offsetWidth / 2));
+    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + Math.floor(userPinBlock.offsetWidth / 2));
   }
 
   function setupOfferMinCost() {
@@ -66,7 +66,7 @@
     setupOfferMinCost();
   }
   window.form = {
-    USER_PIN_STING_HEIGHT: USER_PIN_STING_HEIGHT,
+    USER_PIN_STING_HEIGHT: USER_PIN_TAIL_HEIGHT,
     toggle: toggleForm,
     getUserAddress: getUserAdvertisementAddress,
     submitHandler: submitClickHandler,
