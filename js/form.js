@@ -55,7 +55,7 @@
 
   function startValidationForm() {
     userOfferType.addEventListener('change', setupOfferMinCost);
-    adFormSubmit.addEventListener('click', window.form.submitHandler);
+    adFormSubmit.addEventListener('click', submitClickHandler);
     userTimeIn.addEventListener('change', function () {
       setupUserTime(userTimeIn, userTimeOut);
     });
@@ -69,7 +69,6 @@
     USER_PIN_STING_HEIGHT: USER_PIN_TAIL_HEIGHT,
     toggle: toggleForm,
     getUserAddress: getUserAdvertisementAddress,
-    submitHandler: submitClickHandler,
     startValidation: startValidationForm
   };
 })();
