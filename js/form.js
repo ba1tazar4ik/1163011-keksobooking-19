@@ -34,7 +34,7 @@
   }
 
   function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
-    userAddressInput.value = Math.floor(userPinBlock.offsetTop + userPinBlock.offsetHeight) + ' , ' + Math.floor(userPinBlock.offsetLeft + userPinBlock.offsetWidth / 2);
+    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight) + ' , ' + (userPinBlock.offsetLeft + Math.floor(userPinBlock.offsetWidth / 2));
   }
 
   function setupOfferMinCost() {

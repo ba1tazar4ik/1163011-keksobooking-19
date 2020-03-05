@@ -37,7 +37,7 @@
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
 
-  userPinBlock.addEventListener('mousedown', function (evt) {
+  userPinBlock.addEventListener('mousedown', function (evt) { // перетаскивание метки
     startCoords = {
       x: evt.clientX,
       y: evt.clientY,
