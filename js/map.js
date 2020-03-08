@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   var KEYCODE_ENTER = 'Enter';
-  var QUANTITY = 8;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
@@ -17,9 +16,9 @@
     window.data.mapPinsBlock.appendChild(fragment);
   }
 
-  function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
-    window.data.generate(advertisementsQuantity);
-    generateAdvertisementPins(advertisementsQuantity);
+  function getAdvertisements() { // получаем объявления и метки на карте
+    window.data.generate();
+    generateAdvertisementPins(window.data.advertisements.length);
   }
 
   function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
@@ -128,7 +127,7 @@
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    getAdvertisements(QUANTITY);
+    getAdvertisements();
     window.form.startValidation();
     window.form.toggle(false);
   }
