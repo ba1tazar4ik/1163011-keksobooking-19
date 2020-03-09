@@ -3,6 +3,7 @@
   var KEYCODE_ENTER = 'Enter';
   var MIN_LOCATION_Y = 130;
   var MAX_LOCATION_Y = 630;
+  var MAX_QUANTITY = 5;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
@@ -13,7 +14,7 @@
     var quantity = 0;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < data.length; i++) {
-      if (data[i].offer && quantity < 5) {
+      if (data[i].offer && quantity < MAX_QUANTITY) {
         fragment.appendChild(window.pin.render(data[i]));
         quantity++;
       }
