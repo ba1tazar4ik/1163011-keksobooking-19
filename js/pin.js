@@ -5,6 +5,7 @@
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
+
   function renderPin(ad) { // рисуем шаблон метки на карте
     var mapPin = mapPinTemplate.cloneNode(true);
     var mapPinImg = mapPin.querySelector('img');
@@ -14,6 +15,7 @@
     mapPinImg.alt = ad.offer.title;
     mapPin.addEventListener('click', function () {
       window.card.open(ad);
+      mapPin.classList.add('map__pin--active');
     });
     return mapPin;
   }

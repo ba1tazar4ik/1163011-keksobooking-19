@@ -1,25 +1,29 @@
 'use strict';
 (function () {
   var KEYCODE_ENTER = 'Enter';
-  var QUANTITY = 8;
+  var MIN_LOCATION_Y = 130;
+  var MAX_LOCATION_Y = 630;
+  var MAX_QUANTITY = 5;
   var startCoords = {};
   var shift = {};
-  var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
+  var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
+  var mapPinsBlock = window.card.mapBlock.querySelector('.map__pins');
   var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
 
-  function generateAdvertisementPins(advertisementsQuantity) { // создаем метки для обявлений
+  function onSuccess(data) { // создаем метки для обявлений
+    var quantity = 0;
     var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < advertisementsQuantity; i++) {
-      fragment.appendChild(window.pin.render(window.data.advertisements[i]));
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].offer && quantity < MAX_QUANTITY) {
+        fragment.appendChild(window.pin.render(data[i]));
+        quantity++;
+      }
     }
-
-    window.data.mapPinsBlock.appendChild(fragment);
+    mapPinsBlock.appendChild(fragment);
   }
 
-  function getAdvertisements(advertisementsQuantity) { // получаем объявления и метки на карте
-    window.data.generate(advertisementsQuantity);
-    generateAdvertisementPins(advertisementsQuantity);
+  function onError(message) {
+    window.console.error(message);
   }
 
   function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
@@ -61,10 +65,10 @@
 
       var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + window.form.USER_PIN_TAIL_HEIGHT;
       var top = userPinBlock.offsetTop - shift.y;
-      var minTop = window.data.MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
-      var maxTop = window.data.MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
+      var minTop = MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
+      var maxTop = MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
       var left = userPinBlock.offsetLeft - shift.x;
-      var maxLeft = window.data.mapPinsBlock.offsetWidth - halfUserPinWidth;
+      var maxLeft = mapPinsBlock.offsetWidth - halfUserPinWidth;
 
       if (top <= minTop) {
         top = minTop;
@@ -128,7 +132,7 @@
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    getAdvertisements(QUANTITY);
+    window.load('https://js.dump.academy/keksobooking/data1', onSuccess, onError);
     window.form.startValidation();
     window.form.toggle(false);
   }

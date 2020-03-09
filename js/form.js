@@ -3,7 +3,7 @@
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var USER_PIN_TAIL_HEIGHT = 15;
   var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
-  var userPinBlock = window.data.mapBlock.querySelector('.map__pin--main');
+  var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
   var adFormBlock = document.querySelector('.ad-form');
   var adFormSubmit = adFormBlock.querySelector('.ad-form__submit');
   var userCapacity = adFormBlock.querySelector('#capacity');
@@ -24,7 +24,7 @@
   }
 
   function toggleForm(booleanTrigger) { // функция переключает состояние форм
-    window.data.mapBlock.classList.toggle('map--faded', booleanTrigger);
+    window.card.mapBlock.classList.toggle('map--faded', booleanTrigger);
     adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
     mapAndFilterBlocks.forEach(function (current) {
       current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
