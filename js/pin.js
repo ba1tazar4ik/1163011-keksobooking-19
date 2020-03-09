@@ -15,6 +15,7 @@
     mapPinImg.alt = ad.offer.title;
     mapPin.addEventListener('click', function () {
       window.card.open(ad);
+      mapPin.classList.add('map__pin--active');
     });
     return mapPin;
   }
