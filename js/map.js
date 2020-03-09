@@ -22,7 +22,7 @@
   }
 
   function onError(message) {
-    console.error(message);
+    window.console.error(message);
   }
 
   function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
@@ -131,7 +131,7 @@
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.load('https://js.dump.academy/keksobooking/data', onSuccess, onError);
+    window.load('https://js.dump.academy/keksobooking/data1', onSuccess, onError);
     window.form.startValidation();
     window.form.toggle(false);
   }
