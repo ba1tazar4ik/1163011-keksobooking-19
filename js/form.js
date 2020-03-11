@@ -47,10 +47,8 @@
     secondTime.value = firstTime.value;
   }
 
-  function submitClickHandler(evt) {
-    evt.preventDefault();
+  function submitClickHandler() {
     validationUserCapacity();
-    adFormBlock.requestSubmit(adFormSubmit);
   }
 
   function startValidationForm() {
@@ -65,8 +63,11 @@
 
     setupOfferMinCost();
   }
+
   window.form = {
     USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
+    userPinBlock: userPinBlock,
+    adFormBlock: adFormBlock,
     toggle: toggleForm,
     getUserAddress: getUserAdvertisementAddress,
     startValidation: startValidationForm

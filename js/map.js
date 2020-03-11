@@ -132,11 +132,15 @@
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.load('https://js.dump.academy/keksobooking/data1', onSuccess, onError);
+    window.load.fromServer('https://js.dump.academy/keksobooking/data', onSuccess, onError);
     window.form.startValidation();
     window.form.toggle(false);
   }
 
   // запускаем включение неактивного состояния сайта после его загрузки
   disableForms();
+
+  window.map = {
+    disableForms: disableForms
+  };
 })();
