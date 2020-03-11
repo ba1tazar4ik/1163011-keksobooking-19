@@ -52,7 +52,9 @@
   }
 
   function startValidationForm() {
-    userOfferType.addEventListener('change', setupOfferMinCost);
+    userOfferType.addEventListener('change', function () {
+      setupOfferMinCost();
+    });
     adFormSubmit.addEventListener('click', submitClickHandler);
     userTimeIn.addEventListener('change', function () {
       setupUserTime(userTimeIn, userTimeOut);

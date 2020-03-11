@@ -26,17 +26,17 @@
     window.console.error(message);
   }
 
-  function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
+  function userPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
     window.form.getUserAddress();
   }
 
   function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
-    document.addEventListener('mousemove', mapPinMouseMoveHandler);
+    document.addEventListener('mousemove', userPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
-    document.removeEventListener('mousemove', mapPinMouseMoveHandler);
+    document.removeEventListener('mousemove', userPinMouseMoveHandler);
     document.removeEventListener('mouseup', userPinMouseUpHandler);
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
@@ -132,7 +132,7 @@
     userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.load.fromServer('https://js.dump.academy/keksobooking/data', onSuccess, onError);
+    window.load.fromServer(onSuccess, onError);
     window.form.startValidation();
     window.form.toggle(false);
   }

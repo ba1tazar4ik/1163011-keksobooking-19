@@ -2,18 +2,19 @@
 (function () {
   var USER_PIN_BLOCK_DEFAULT_COORDS = {x: 570, y: 375};
   var mainBlock = document.querySelector('main');
+  var adFormReset = document.querySelector('.ad-form__reset');
   var successUploadTemplate = document.querySelector('#success')
   .content
   .querySelector('.success');
-  var successBlock = successUploadTemplate.cloneNode(true);
   var errorUploadTemplate = document.querySelector('#error')
   .content
   .querySelector('.error');
-  var errorBlock = errorUploadTemplate.cloneNode(true);
+  var errorBlock;
+  var successBlock;
 
   function resetAllData() {
     removeMapPins();
-    moveToDefaultCordsUserPin();
+    moveToDefaultCoordinatesUserPin();
     window.form.adFormBlock.reset();
     window.map.disableForms();
     window.card.close();
@@ -22,67 +23,77 @@
   function removeMapPins() {
     var adPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var i = 0; i < adPins.length; i++) {
-      window.card.mapBlock.querySelector('.map__pins').removeChild(adPins[i]);
+      adPins[i].remove();
     }
   }
 
-  function moveToDefaultCordsUserPin() {
+  function moveToDefaultCoordinatesUserPin() {
     window.form.userPinBlock.style.cssText = 'left: ' + USER_PIN_BLOCK_DEFAULT_COORDS.x + 'px; top: ' + USER_PIN_BLOCK_DEFAULT_COORDS.y + 'px;';
   }
 
-  function uploadForm(evt) {
+  function submitHandler(evt) {
     window.load.toServer(new FormData(window.form.adFormBlock), onSuccessUpload, onErrorUpload);
     evt.preventDefault();
   }
 
   function onSuccessUpload() {
+    successBlock = successUploadTemplate.cloneNode(true);
     mainBlock.appendChild(successBlock);
 
     successBlock.addEventListener('click', function () {
-      mainBlock.removeChild(successBlock);
+      successBlock.remove();
     });
-    document.addEventListener('keydown', removeSuccessBlock);
+    document.addEventListener('keydown', onSuccessBlockKeydownEscapeHandler);
 
     resetAllData();
+    return successBlock;
   }
 
-  function removeSuccessBlock(evt) {
+  function onSuccessBlockKeydownEscapeHandler(evt) {
     if (evt.key === window.card.KEYCODE_ESCAPE) {
-      mainBlock.removeChild(successBlock);
-      document.removeEventListener('keydown', removeSuccessBlock);
+      successBlock.remove();
+      document.removeEventListener('keydown', onSuccessBlockKeydownEscapeHandler);
     }
   }
 
   function onErrorUpload(message) {
     window.console.error(message);
 
+    errorBlock = errorUploadTemplate.cloneNode(true);
     mainBlock.appendChild(errorBlock);
-    document.addEventListener('keydown', removeErrorBlockByEscape);
-    errorBlock.querySelector('.error__button').addEventListener('click', removeErrorBlock);
-    errorBlock.querySelector('.error__message').addEventListener('click', stopPropagationOnErrorMessage);
-    errorBlock.addEventListener('click', removeErrorBlock);
+    document.addEventListener('keydown', onErrorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__button').addEventListener('click', onErrorButtonMouseClickHandler);
+    errorBlock.querySelector('.error__message').addEventListener('click', onErrorMessageMouseClickHandler);
+    errorBlock.addEventListener('click', function () {
+      removeErrorBlock();
+    });
+
+    return errorBlock;
   }
 
-  function stopPropagationOnErrorMessage(evt) {
+  function onErrorMessageMouseClickHandler(evt) {
     evt.stopPropagation();
   }
 
-  function removeErrorBlock(evt) {
-    document.removeEventListener('keydown', removeErrorBlock);
-    errorBlock.querySelector('.error__message').removeEventListener('click', stopPropagationOnErrorMessage);
-    mainBlock.removeChild(errorBlock);
-
-    evt.preventDefault();
+  function onErrorButtonMouseClickHandler() {
+    removeErrorBlock();
   }
 
-  function removeErrorBlockByEscape(evt) {
+  function onErrorBlockKeydownEscapeHandler(evt) {
     if (evt.key === window.card.KEYCODE_ESCAPE) {
       removeErrorBlock();
     }
   }
 
-  window.form.adFormBlock.addEventListener('submit', uploadForm);
-  document.querySelector('.ad-form__reset').addEventListener('click', function (evt) {
+  function removeErrorBlock() {
+    document.removeEventListener('keydown', onErrorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__message').removeEventListener('click', onErrorMessageMouseClickHandler);
+    errorBlock.querySelector('.error__button').removeEventListener('click', onErrorButtonMouseClickHandler);
+    errorBlock.remove();
+  }
+
+  window.form.adFormBlock.addEventListener('submit', submitHandler);
+  adFormReset.addEventListener('click', function (evt) {
     resetAllData();
     evt.preventDefault();
   });
