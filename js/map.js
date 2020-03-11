@@ -49,7 +49,7 @@
 
     var dragged = false;
 
-    var onMouseMove = function (moveEvt) {
+    var pinMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
       dragged = true;
 
@@ -87,24 +87,24 @@
 
     };
 
-    var onMouseUp = function (upEvt) {
+    var pinMouseUpHandler = function (upEvt) {
       upEvt.preventDefault();
 
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', pinMoveHandler);
+      document.removeEventListener('mouseup', pinMouseUpHandler);
 
       if (dragged) {
-        var onClickPreventDefault = function (clickEvt) {
+        var pinClickPreventDefaultHandler = function (clickEvt) {
           clickEvt.preventDefault();
-          userPinBlock.removeEventListener('click', onClickPreventDefault);
+          userPinBlock.removeEventListener('click', pinClickPreventDefaultHandler);
         };
-        userPinBlock.addEventListener('click', onClickPreventDefault);
+        userPinBlock.addEventListener('click', pinClickPreventDefaultHandler);
       }
 
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', pinMoveHandler);
+    document.addEventListener('mouseup', pinMouseUpHandler);
   });
 
   function disableForms() { // функция выключает карту и формы

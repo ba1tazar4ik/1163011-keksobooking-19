@@ -47,7 +47,7 @@
     secondTime.value = firstTime.value;
   }
 
-  function submitClickHandler() {
+  function submitButtonClickHandler() {
     validationUserCapacity();
   }
 
@@ -55,7 +55,7 @@
     userOfferType.addEventListener('change', function () {
       setupOfferMinCost();
     });
-    adFormSubmit.addEventListener('click', submitClickHandler);
+    adFormSubmit.addEventListener('click', submitButtonClickHandler);
     userTimeIn.addEventListener('change', function () {
       setupUserTime(userTimeIn, userTimeOut);
     });

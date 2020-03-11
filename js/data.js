@@ -31,7 +31,7 @@
     window.form.userPinBlock.style.cssText = 'left: ' + USER_PIN_BLOCK_DEFAULT_COORDS.x + 'px; top: ' + USER_PIN_BLOCK_DEFAULT_COORDS.y + 'px;';
   }
 
-  function submitHandler(evt) {
+  function adFormBlockSubmitHandler(evt) {
     window.load.toServer(new FormData(window.form.adFormBlock), onSuccessUpload, onErrorUpload);
     evt.preventDefault();
   }
@@ -43,16 +43,16 @@
     successBlock.addEventListener('click', function () {
       successBlock.remove();
     });
-    document.addEventListener('keydown', onSuccessBlockKeydownEscapeHandler);
+    document.addEventListener('keydown', successBlockKeydownEscapeHandler);
 
     resetAllData();
     return successBlock;
   }
 
-  function onSuccessBlockKeydownEscapeHandler(evt) {
+  function successBlockKeydownEscapeHandler(evt) {
     if (evt.key === window.card.KEYCODE_ESCAPE) {
       successBlock.remove();
-      document.removeEventListener('keydown', onSuccessBlockKeydownEscapeHandler);
+      document.removeEventListener('keydown', successBlockKeydownEscapeHandler);
     }
   }
 
@@ -61,9 +61,9 @@
 
     errorBlock = errorUploadTemplate.cloneNode(true);
     mainBlock.appendChild(errorBlock);
-    document.addEventListener('keydown', onErrorBlockKeydownEscapeHandler);
-    errorBlock.querySelector('.error__button').addEventListener('click', onErrorButtonMouseClickHandler);
-    errorBlock.querySelector('.error__message').addEventListener('click', onErrorMessageMouseClickHandler);
+    document.addEventListener('keydown', errorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__button').addEventListener('click', errorButtonMouseClickHandler);
+    errorBlock.querySelector('.error__message').addEventListener('click', errorMessageMouseClickHandler);
     errorBlock.addEventListener('click', function () {
       removeErrorBlock();
     });
@@ -71,28 +71,28 @@
     return errorBlock;
   }
 
-  function onErrorMessageMouseClickHandler(evt) {
+  function errorMessageMouseClickHandler(evt) {
     evt.stopPropagation();
   }
 
-  function onErrorButtonMouseClickHandler() {
+  function errorButtonMouseClickHandler() {
     removeErrorBlock();
   }
 
-  function onErrorBlockKeydownEscapeHandler(evt) {
+  function errorBlockKeydownEscapeHandler(evt) {
     if (evt.key === window.card.KEYCODE_ESCAPE) {
       removeErrorBlock();
     }
   }
 
   function removeErrorBlock() {
-    document.removeEventListener('keydown', onErrorBlockKeydownEscapeHandler);
-    errorBlock.querySelector('.error__message').removeEventListener('click', onErrorMessageMouseClickHandler);
-    errorBlock.querySelector('.error__button').removeEventListener('click', onErrorButtonMouseClickHandler);
+    document.removeEventListener('keydown', errorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__message').removeEventListener('click', errorMessageMouseClickHandler);
+    errorBlock.querySelector('.error__button').removeEventListener('click', errorButtonMouseClickHandler);
     errorBlock.remove();
   }
 
-  window.form.adFormBlock.addEventListener('submit', submitHandler);
+  window.form.adFormBlock.addEventListener('submit', adFormBlockSubmitHandler);
   adFormReset.addEventListener('click', function (evt) {
     resetAllData();
     evt.preventDefault();

@@ -13,7 +13,7 @@
   var mapFiltersBlock = mapBlock.querySelector('.map__filters-container');
   var mapCardBlock = null;
 
-  function onPopupMapCardEscapeKeydownHandler(evt) {
+  function popupMapCardEscapeKeydownHandler(evt) {
     if (evt.key === KEYCODE_ESCAPE) {
       removeMapCardBlock();
     }
@@ -28,7 +28,7 @@
     if (mapPinActive) {
       mapPinActive.classList.remove('map__pin--active');
     }
-    document.removeEventListener('keydown', onPopupMapCardEscapeKeydownHandler);
+    document.removeEventListener('keydown', popupMapCardEscapeKeydownHandler);
   }
 
   function renderCardFeatures(adFeatures, ad, cardFeaturesBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
@@ -83,7 +83,7 @@
     mapBlock.querySelector('.popup__close').addEventListener('click', function () {
       removeMapCardBlock();
     });
-    document.addEventListener('keydown', onPopupMapCardEscapeKeydownHandler);
+    document.addEventListener('keydown', popupMapCardEscapeKeydownHandler);
     return mapCardBlock;
   }
 
