@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  var URL = 'https://js.dump.academy/keksobooking1';
+  var URL = 'https://js.dump.academy/keksobooking';
 
   function download(url, onSuccess, onError) {
     var xhr = new XMLHttpRequest();
