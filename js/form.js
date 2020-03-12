@@ -20,7 +20,9 @@
     .querySelector('.error');
   var errorBlock;
   var successBlock;
-  var defaultUserAddressInputValue = {x: window.map.userPinBlock.offsetLeft + Math.floor(window.map.userPinBlock.offsetWidth / 2), y: window.map.userPinBlock.offsetTop + window.map.userPinBlock.offsetHeight + window.map.USER_PIN_TAIL_HEIGHT}
+  var defaultUserAddressInputValue = {x: window.map.userPinBlock.offsetLeft + Math.floor(window.map.userPinBlock.offsetWidth / 2),
+    y: window.map.userPinBlock.offsetTop + window.map.userPinBlock.offsetHeight + window.map.USER_PIN_TAIL_HEIGHT
+  };
 
 
   function validationUserCapacity() {
