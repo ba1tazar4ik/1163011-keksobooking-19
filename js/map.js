@@ -42,7 +42,7 @@
   }
 
   function userPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + halfUserPinWidth);
+    userAddressInput.value = (userPinBlock.offsetLeft + halfUserPinWidth) + ' , ' + (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT);
   }
 
   function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
@@ -123,6 +123,7 @@
   });
 
   window.map = {
+    USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
     adFormBlock: adFormBlock,
     userPinBlock: userPinBlock,
     userAddressInput: userAddressInput,
