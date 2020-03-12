@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var KEYCODE_ENTER = 'Enter';
+  var DEFOULT_USER_ADRESS_INPUT_VALUE = '455 , 602';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var mainBlock = document.querySelector('main');
   var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
@@ -74,7 +75,7 @@
     window.map.userPinBlock.addEventListener('mousedown', window.map.userPinMouseDownHandler);
     window.map.userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.map.setUserAdvertisementAddress();
+    window.map.userAddressInput.value = DEFOULT_USER_ADRESS_INPUT_VALUE;
     toggleForm(true);
   }
 

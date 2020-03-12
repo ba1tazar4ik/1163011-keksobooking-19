@@ -42,10 +42,6 @@
   }
 
   function userPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    setUserAdvertisementAddress();
-  }
-
-  function setUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
     userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + halfUserPinWidth);
   }
 
@@ -132,7 +128,6 @@
     userAddressInput: userAddressInput,
     removePins: removeMapPins,
     moveToDefaultCoordinatesUserPin: moveToDefaultCoordinatesUserPin,
-    setUserAdvertisementAddress: setUserAdvertisementAddress,
     userPinMouseDownHandler: userPinMouseDownHandler,
     successDownloadData: onSuccess,
     errorDownloadData: onError
