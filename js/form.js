@@ -74,7 +74,7 @@
     window.map.userPinBlock.addEventListener('mousedown', window.map.userPinMouseDownHandler);
     window.map.userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.map.getUserAdvertisementAddress();
+    window.map.setUserAdvertisementAddress();
     toggleForm(true);
   }
 
