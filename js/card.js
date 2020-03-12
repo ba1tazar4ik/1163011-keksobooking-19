@@ -13,17 +13,22 @@
   var mapFiltersBlock = mapBlock.querySelector('.map__filters-container');
   var mapCardBlock = null;
 
-  function closePopupMapCard(evt) {
+  function popupMapCardEscapeKeydownHandler(evt) {
     if (evt.key === KEYCODE_ESCAPE) {
       removeMapCardBlock();
     }
   }
 
   function removeMapCardBlock() {
-    mapBlock.removeChild(mapCardBlock);
+    var mapPinActive = mapBlock.querySelector('.map__pin--active');
+    if (mapCardBlock) {
+      mapCardBlock.remove();
+    }
     mapCardBlock = null;
-    mapBlock.querySelector('.map__pin--active').classList.remove('map__pin--active');
-    document.removeEventListener('keydown', closePopupMapCard);
+    if (mapPinActive) {
+      mapPinActive.classList.remove('map__pin--active');
+    }
+    document.removeEventListener('keydown', popupMapCardEscapeKeydownHandler);
   }
 
   function renderCardFeatures(adFeatures, ad, cardFeaturesBlock) { // проверяем какие Features у нас есть в объявлении и есть ли они вообще
@@ -72,18 +77,20 @@
   }
 
   function openPopupMapCard(ad) {
-    if (mapCardBlock) {
-      removeMapCardBlock();
-    }
+    removeMapCardBlock();
     mapBlock.insertBefore(renderCard(ad), mapFiltersBlock);
     mapCardBlock = mapBlock.querySelector('.map__card');
-    mapBlock.querySelector('.popup__close').addEventListener('click', removeMapCardBlock);
-    document.addEventListener('keydown', closePopupMapCard);
+    mapBlock.querySelector('.popup__close').addEventListener('click', function () {
+      removeMapCardBlock();
+    });
+    document.addEventListener('keydown', popupMapCardEscapeKeydownHandler);
     return mapCardBlock;
   }
 
   window.card = {
+    KEYCODE_ESCAPE: KEYCODE_ESCAPE,
     mapBlock: mapBlock,
-    open: openPopupMapCard
+    open: openPopupMapCard,
+    close: removeMapCardBlock
   };
 })();

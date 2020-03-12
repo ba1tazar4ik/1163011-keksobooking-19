@@ -1,13 +1,17 @@
 'use strict';
 (function () {
-  var KEYCODE_ENTER = 'Enter';
   var MIN_LOCATION_Y = 130;
   var MAX_LOCATION_Y = 630;
   var MAX_QUANTITY = 5;
+  var USER_PIN_TAIL_HEIGHT = 15;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
+  var userPinBlockDefaultX = userPinBlock.offsetLeft;
+  var userPinBlockDefaultY = userPinBlock.offsetTop;
   var mapPinsBlock = window.card.mapBlock.querySelector('.map__pins');
+  var adFormBlock = document.querySelector('.ad-form');
+  var userAddressInput = adFormBlock.querySelector('#address');
   var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
 
   function onSuccess(data) { // создаем метки для обявлений
@@ -26,17 +30,28 @@
     window.console.error(message);
   }
 
-  function mapPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    window.form.getUserAddress();
+  function removeMapPins() {
+    var adPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < adPins.length; i++) {
+      adPins[i].remove();
+    }
+  }
+
+  function moveToDefaultCoordinatesUserPin() {
+    userPinBlock.style.cssText = 'left: ' + userPinBlockDefaultX + 'px; top: ' + userPinBlockDefaultY + 'px;';
+  }
+
+  function userPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
+    userAddressInput.value = (userPinBlock.offsetLeft + halfUserPinWidth) + ' , ' + (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT);
   }
 
   function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
-    document.addEventListener('mousemove', mapPinMouseMoveHandler);
+    document.addEventListener('mousemove', userPinMouseMoveHandler);
     document.addEventListener('mouseup', userPinMouseUpHandler);
   }
 
   function userPinMouseUpHandler() { // функция в момент отпускания метки убирает обработчик движения метки и обработчик отпускания метки, включает обработчик нажатия на метку
-    document.removeEventListener('mousemove', mapPinMouseMoveHandler);
+    document.removeEventListener('mousemove', userPinMouseMoveHandler);
     document.removeEventListener('mouseup', userPinMouseUpHandler);
     userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
   }
@@ -49,7 +64,7 @@
 
     var dragged = false;
 
-    var onMouseMove = function (moveEvt) {
+    var pinMoveHandler = function (moveEvt) {
       moveEvt.preventDefault();
       dragged = true;
 
@@ -63,7 +78,7 @@
         y: moveEvt.clientY,
       };
 
-      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + window.form.USER_PIN_TAIL_HEIGHT;
+      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT;
       var top = userPinBlock.offsetTop - shift.y;
       var minTop = MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
       var maxTop = MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
@@ -87,56 +102,35 @@
 
     };
 
-    var onMouseUp = function (upEvt) {
+    var pinMouseUpHandler = function (upEvt) {
       upEvt.preventDefault();
 
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', pinMoveHandler);
+      document.removeEventListener('mouseup', pinMouseUpHandler);
 
       if (dragged) {
-        var onClickPreventDefault = function (clickEvt) {
+        var pinClickPreventDefaultHandler = function (clickEvt) {
           clickEvt.preventDefault();
-          userPinBlock.removeEventListener('click', onClickPreventDefault);
+          userPinBlock.removeEventListener('click', pinClickPreventDefaultHandler);
         };
-        userPinBlock.addEventListener('click', onClickPreventDefault);
+        userPinBlock.addEventListener('click', pinClickPreventDefaultHandler);
       }
 
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', pinMoveHandler);
+    document.addEventListener('mouseup', pinMouseUpHandler);
   });
 
-  function disableForms() { // функция выключает карту и формы
-    userPinBlock.addEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
-    userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
-
-    window.form.getUserAddress();
-    window.form.toggle(true);
-  }
-
-  function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
-    if (evt.button === 0) {
-      activateForm();
-    }
-  }
-
-  function userPinFirstKeyDownHandler(evt) { // функция запускает активацию сайта после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
-    if (evt.key === KEYCODE_ENTER) {
-      activateForm();
-    }
-  }
-
-  function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
-    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
-
-    window.load('https://js.dump.academy/keksobooking/data1', onSuccess, onError);
-    window.form.startValidation();
-    window.form.toggle(false);
-  }
-
-  // запускаем включение неактивного состояния сайта после его загрузки
-  disableForms();
+  window.map = {
+    USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
+    adFormBlock: adFormBlock,
+    userPinBlock: userPinBlock,
+    userAddressInput: userAddressInput,
+    removePins: removeMapPins,
+    moveToDefaultCoordinatesUserPin: moveToDefaultCoordinatesUserPin,
+    userPinMouseDownHandler: userPinMouseDownHandler,
+    successDownloadData: onSuccess,
+    errorDownloadData: onError
+  };
 })();

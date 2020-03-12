@@ -1,18 +1,29 @@
 'use strict';
 (function () {
+  var KEYCODE_ENTER = 'Enter';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
-  var USER_PIN_TAIL_HEIGHT = 15;
+  var mainBlock = document.querySelector('main');
   var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
-  var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
-  var adFormBlock = document.querySelector('.ad-form');
-  var adFormSubmit = adFormBlock.querySelector('.ad-form__submit');
-  var userCapacity = adFormBlock.querySelector('#capacity');
-  var userRoomNumber = adFormBlock.querySelector('#room_number');
-  var userAddressInput = adFormBlock.querySelector('#address');
-  var userPrice = adFormBlock.querySelector('#price');
-  var userOfferType = adFormBlock.querySelector('#type');
-  var userTimeIn = adFormBlock.querySelector('#timein');
-  var userTimeOut = adFormBlock.querySelector('#timeout');
+  var adFormSubmit = window.map.adFormBlock.querySelector('.ad-form__submit');
+  var adFormReset = document.querySelector('.ad-form__reset');
+  var userCapacity = window.map.adFormBlock.querySelector('#capacity');
+  var userRoomNumber = window.map.adFormBlock.querySelector('#room_number');
+  var userPrice = window.map.adFormBlock.querySelector('#price');
+  var userOfferType = window.map.adFormBlock.querySelector('#type');
+  var userTimeIn = window.map.adFormBlock.querySelector('#timein');
+  var userTimeOut = window.map.adFormBlock.querySelector('#timeout');
+  var successUploadTemplate = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+  var errorUploadTemplate = document.querySelector('#error')
+    .content
+    .querySelector('.error');
+  var errorBlock;
+  var successBlock;
+  var defaultUserAddressInputValue = {
+    x: window.map.userPinBlock.offsetLeft + Math.floor(window.map.userPinBlock.offsetWidth / 2),
+    y: window.map.userPinBlock.offsetTop + window.map.userPinBlock.offsetHeight + window.map.USER_PIN_TAIL_HEIGHT
+  };
 
 
   function validationUserCapacity() {
@@ -25,17 +36,13 @@
 
   function toggleForm(booleanTrigger) { // функция переключает состояние форм
     window.card.mapBlock.classList.toggle('map--faded', booleanTrigger);
-    adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
+    window.map.adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
     mapAndFilterBlocks.forEach(function (current) {
       current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
         currentValue.disabled = booleanTrigger;
       });
     });
-    userAddressInput.readOnly = true;
-  }
-
-  function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
-    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + Math.floor(userPinBlock.offsetWidth / 2));
+    window.map.userAddressInput.readOnly = true;
   }
 
   function setupOfferMinCost() {
@@ -47,15 +54,15 @@
     secondTime.value = firstTime.value;
   }
 
-  function submitClickHandler(evt) {
-    evt.preventDefault();
+  function submitButtonClickHandler() {
     validationUserCapacity();
-    adFormBlock.requestSubmit(adFormSubmit);
   }
 
   function startValidationForm() {
-    userOfferType.addEventListener('change', setupOfferMinCost);
-    adFormSubmit.addEventListener('click', submitClickHandler);
+    userOfferType.addEventListener('change', function () {
+      setupOfferMinCost();
+    });
+    adFormSubmit.addEventListener('click', submitButtonClickHandler);
     userTimeIn.addEventListener('change', function () {
       setupUserTime(userTimeIn, userTimeOut);
     });
@@ -65,10 +72,112 @@
 
     setupOfferMinCost();
   }
-  window.form = {
-    USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
-    toggle: toggleForm,
-    getUserAddress: getUserAdvertisementAddress,
-    startValidation: startValidationForm
-  };
+
+  function disableForms() { // функция выключает карту и формы
+    window.map.userPinBlock.addEventListener('mousedown', userPinFirstMouseDownHandler);
+    window.map.userPinBlock.addEventListener('mousedown', window.map.userPinMouseDownHandler);
+    window.map.userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
+
+    window.map.userAddressInput.value = defaultUserAddressInputValue.x + ',' + defaultUserAddressInputValue.y;
+    toggleForm(true);
+  }
+
+  function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
+    if (evt.button === 0) {
+      activateForm();
+    }
+  }
+
+  function userPinFirstKeyDownHandler(evt) { // функция запускает активацию сайта после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
+    if (evt.key === KEYCODE_ENTER) {
+      activateForm();
+    }
+  }
+
+  function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
+    window.map.userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
+    window.map.userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
+
+    window.load.fromServer(window.map.successDownloadData, window.map.errorDownloadData);
+    startValidationForm();
+    toggleForm(false);
+  }
+
+  function resetAllData() {
+    window.map.removePins();
+    window.map.moveToDefaultCoordinatesUserPin();
+    window.map.adFormBlock.reset();
+    disableForms();
+    window.card.close();
+  }
+
+  function adFormBlockSubmitHandler(evt) {
+    window.load.toServer(new FormData(window.map.adFormBlock), onSuccessUpload, onErrorUpload);
+    evt.preventDefault();
+  }
+
+  function onSuccessUpload() {
+    successBlock = successUploadTemplate.cloneNode(true);
+    mainBlock.appendChild(successBlock);
+
+    successBlock.addEventListener('click', function () {
+      successBlock.remove();
+    });
+    document.addEventListener('keydown', successBlockKeydownEscapeHandler);
+
+    resetAllData();
+    return successBlock;
+  }
+
+  function successBlockKeydownEscapeHandler(evt) {
+    if (evt.key === window.card.KEYCODE_ESCAPE) {
+      successBlock.remove();
+      document.removeEventListener('keydown', successBlockKeydownEscapeHandler);
+    }
+  }
+
+  function onErrorUpload(message) {
+    window.console.error(message);
+
+    errorBlock = errorUploadTemplate.cloneNode(true);
+    mainBlock.appendChild(errorBlock);
+    document.addEventListener('keydown', errorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__button').addEventListener('click', errorButtonMouseClickHandler);
+    errorBlock.querySelector('.error__message').addEventListener('click', errorMessageMouseClickHandler);
+    errorBlock.addEventListener('click', function () {
+      removeErrorBlock();
+    });
+
+    return errorBlock;
+  }
+
+  function errorMessageMouseClickHandler(evt) {
+    evt.stopPropagation();
+  }
+
+  function errorButtonMouseClickHandler() {
+    removeErrorBlock();
+  }
+
+  function errorBlockKeydownEscapeHandler(evt) {
+    if (evt.key === window.card.KEYCODE_ESCAPE) {
+      removeErrorBlock();
+    }
+  }
+
+  function removeErrorBlock() {
+    document.removeEventListener('keydown', errorBlockKeydownEscapeHandler);
+    errorBlock.querySelector('.error__message').removeEventListener('click', errorMessageMouseClickHandler);
+    errorBlock.querySelector('.error__button').removeEventListener('click', errorButtonMouseClickHandler);
+    errorBlock.remove();
+  }
+
+  // запускаем включение неактивного состояния сайта после его загрузки
+  disableForms();
+
+  window.map.adFormBlock.addEventListener('submit', adFormBlockSubmitHandler);
+  adFormReset.addEventListener('click', function (evt) {
+    resetAllData();
+    evt.preventDefault();
+  });
 })();
