@@ -1,13 +1,17 @@
 'use strict';
 (function () {
-  var KEYCODE_ENTER = 'Enter';
   var MIN_LOCATION_Y = 130;
   var MAX_LOCATION_Y = 630;
   var MAX_QUANTITY = 5;
+  var USER_PIN_TAIL_HEIGHT = 15;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
+  var userPinBlockDefaultX = userPinBlock.offsetLeft;
+  var userPinBlockDefaultY = userPinBlock.offsetTop;
   var mapPinsBlock = window.card.mapBlock.querySelector('.map__pins');
+  var adFormBlock = document.querySelector('.ad-form');
+  var userAddressInput = adFormBlock.querySelector('#address');
   var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
 
   function onSuccess(data) { // создаем метки для обявлений
@@ -26,8 +30,23 @@
     window.console.error(message);
   }
 
+  function removeMapPins() {
+    var adPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < adPins.length; i++) {
+      adPins[i].remove();
+    }
+  }
+
+  function moveToDefaultCoordinatesUserPin() {
+    userPinBlock.style.cssText = 'left: ' + userPinBlockDefaultX + 'px; top: ' + userPinBlockDefaultY + 'px;';
+  }
+
   function userPinMouseMoveHandler() { // функция заполняет инпут с адресом координатами острой части метки
-    window.form.getUserAddress();
+    getUserAdvertisementAddress();
+  }
+
+  function getUserAdvertisementAddress() { // функция записывает значение поля #address объявления пользовтеля
+    userAddressInput.value = (userPinBlock.offsetTop + userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT) + ' , ' + (userPinBlock.offsetLeft + halfUserPinWidth);
   }
 
   function userPinMouseDownHandler() { // функция вешает обработчик движения метки и обработчик отпускания метки после нажатия на метку пользователя
@@ -63,7 +82,7 @@
         y: moveEvt.clientY,
       };
 
-      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + window.form.USER_PIN_TAIL_HEIGHT;
+      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT;
       var top = userPinBlock.offsetTop - shift.y;
       var minTop = MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
       var maxTop = MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
@@ -107,40 +126,15 @@
     document.addEventListener('mouseup', pinMouseUpHandler);
   });
 
-  function disableForms() { // функция выключает карту и формы
-    userPinBlock.addEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.addEventListener('mousedown', userPinMouseDownHandler);
-    userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
-
-    window.form.getUserAddress();
-    window.form.toggle(true);
-  }
-
-  function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
-    if (evt.button === 0) {
-      activateForm();
-    }
-  }
-
-  function userPinFirstKeyDownHandler(evt) { // функция запускает активацию сайта после нажатия Enter на метке и убирает обработчик клика и нажатия Enter
-    if (evt.key === KEYCODE_ENTER) {
-      activateForm();
-    }
-  }
-
-  function activateForm() { // фнукция активирует форму, получает обьявления и снимает обработчики используемые для активации
-    userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
-    userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
-
-    window.load.fromServer(onSuccess, onError);
-    window.form.startValidation();
-    window.form.toggle(false);
-  }
-
-  // запускаем включение неактивного состояния сайта после его загрузки
-  disableForms();
-
   window.map = {
-    disableForms: disableForms
+    adFormBlock: adFormBlock,
+    userPinBlock: userPinBlock,
+    userAddressInput: userAddressInput,
+    removePins: removeMapPins,
+    moveToDefaultCoordinatesUserPin: moveToDefaultCoordinatesUserPin,
+    getUserAdvertisementAddress: getUserAdvertisementAddress,
+    userPinMouseDownHandler: userPinMouseDownHandler,
+    successDownloadData: onSuccess,
+    errorDownloadData: onError
   };
 })();
