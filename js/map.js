@@ -38,6 +38,7 @@
 
   function mapFilterOfTypeChangeHandler() {
     removeMapPins();
+    window.card.close();
     getFilteredOffers(offers, mapFilterOfType.value);
     getMapPins(similarOffers.slice(0, MAX_QUANTITY));
   }
