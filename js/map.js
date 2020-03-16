@@ -49,10 +49,10 @@
     });
   }
 
-  function getMapPins(ad) {
+  function getMapPins(ads) {
     var fragment = document.createDocumentFragment();
-    ad.forEach(function (current) {
-      fragment.appendChild(window.pin.render(current));
+    ads.forEach(function (currentAd) {
+      fragment.appendChild(window.pin.render(currentAd));
     });
     mapPinsBlock.appendChild(fragment);
   }
