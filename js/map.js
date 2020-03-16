@@ -17,7 +17,7 @@
   var mapFiltersControls = mapFiltersBlock.querySelectorAll('select, input');
   var mapFilterOfType = mapFiltersBlock.querySelector('#housing-type');
   var offers = {};
-  var uniqueOffers = {};
+  var similarOffers = {};
 
   function toggleMapFilters(booleanTrigger) {
     mapFiltersControls.forEach(function (current) {
@@ -28,7 +28,7 @@
   function onSuccess(data) { // создаем метки для обявлений
     offers = data;
     toggleMapFilters(false);
-    getMapPins(offers);
+    getMapPins(offers.slice(0, MAX_QUANTITY));
     mapFilterOfType.addEventListener('change', mapFilterOfTypeChangeHandler);
   }
 
@@ -37,33 +37,22 @@
   }
 
   function mapFilterOfTypeChangeHandler() {
-    getFilteredOffers(offers, mapFilterOfType.value);
     removeMapPins();
-    getMapPins(uniqueOffers);
+    getFilteredOffers(offers, mapFilterOfType.value);
+    getMapPins(similarOffers.slice(0, MAX_QUANTITY));
   }
 
   function getFilteredOffers(data, filterValue) {
-    var sameOffers = data.filter(function (it) {
-      if (filterValue === 'any') {
-        return it;
-      } else {
-        return it.offer.type === filterValue;
-      }
+    similarOffers = data.filter(function (it) {
+      return filterValue === 'any' ? it : it.offer.type === filterValue;
     });
-    var filteredOffers = sameOffers.concat(data);
-
-    uniqueOffers = filteredOffers.filter(function (it, i) {
-      return filteredOffers.indexOf(it) === i;
-    });
-
-    return uniqueOffers;
   }
 
   function getMapPins(ad) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < MAX_QUANTITY; i++) {
-      fragment.appendChild(window.pin.render(ad[i]));
-    }
+    ad.forEach(function (current) {
+      fragment.appendChild(window.pin.render(current));
+    });
     mapPinsBlock.appendChild(fragment);
   }
 

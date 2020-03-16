@@ -3,7 +3,7 @@
   var KEYCODE_ENTER = 'Enter';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var mainBlock = document.querySelector('main');
-  var adFormControlsBlocks = document.querySelectorAll('select, input, textarea,.ad-form__submit, .ad-form__reset');
+  var adFormControlsBlocks = document.querySelectorAll('select, fieldset');
   var adFormSubmit = window.map.adFormBlock.querySelector('.ad-form__submit');
   var adFormReset = document.querySelector('.ad-form__reset');
   var userCapacity = window.map.adFormBlock.querySelector('#capacity');
