@@ -3,7 +3,7 @@
   var KEYCODE_ENTER = 'Enter';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var mainBlock = document.querySelector('main');
-  var mapAndFilterBlocks = document.querySelectorAll('.map__filters, .ad-form');
+  var adFormControlsBlocks = document.querySelectorAll('select, fieldset');
   var adFormSubmit = window.map.adFormBlock.querySelector('.ad-form__submit');
   var adFormReset = document.querySelector('.ad-form__reset');
   var userCapacity = window.map.adFormBlock.querySelector('#capacity');
@@ -37,10 +37,8 @@
   function toggleForm(booleanTrigger) { // функция переключает состояние форм
     window.card.mapBlock.classList.toggle('map--faded', booleanTrigger);
     window.map.adFormBlock.classList.toggle('ad-form--disabled', booleanTrigger);
-    mapAndFilterBlocks.forEach(function (current) {
-      current.querySelectorAll('select, input, textarea').forEach(function (currentValue) {
-        currentValue.disabled = booleanTrigger;
-      });
+    adFormControlsBlocks.forEach(function (current) {
+      current.disabled = booleanTrigger;
     });
     window.map.userAddressInput.readOnly = true;
   }
@@ -80,6 +78,7 @@
 
     window.map.userAddressInput.value = defaultUserAddressInputValue.x + ',' + defaultUserAddressInputValue.y;
     toggleForm(true);
+    window.map.toggleFilters(true);
   }
 
   function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
@@ -109,6 +108,7 @@
     window.map.adFormBlock.reset();
     disableForms();
     window.card.close();
+    window.map.removeHandlersOfFilters();
   }
 
   function adFormBlockSubmitHandler(evt) {

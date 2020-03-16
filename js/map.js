@@ -13,21 +13,48 @@
   var adFormBlock = document.querySelector('.ad-form');
   var userAddressInput = adFormBlock.querySelector('#address');
   var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
+  var mapFiltersBlock = window.card.mapBlock.querySelector('.map__filters');
+  var mapFiltersControls = mapFiltersBlock.querySelectorAll('select, input');
+  var mapFilterOfType = mapFiltersBlock.querySelector('#housing-type');
+  var offers = {};
+  var similarOffers = {};
+
+  function toggleMapFilters(booleanTrigger) {
+    mapFiltersControls.forEach(function (current) {
+      current.disabled = booleanTrigger;
+    });
+  }
 
   function onSuccess(data) { // создаем метки для обявлений
-    var quantity = 0;
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
-      if (data[i].offer && quantity < MAX_QUANTITY) {
-        fragment.appendChild(window.pin.render(data[i]));
-        quantity++;
-      }
-    }
-    mapPinsBlock.appendChild(fragment);
+    offers = data;
+    toggleMapFilters(false);
+    getMapPins(offers.slice(0, MAX_QUANTITY));
+    mapFilterOfType.addEventListener('change', mapFilterOfTypeChangeHandler);
   }
 
   function onError(message) {
     window.console.error(message);
+  }
+
+  function mapFilterOfTypeChangeHandler() {
+    removeMapPins();
+    window.card.close();
+    getFilteredOffers(offers, mapFilterOfType.value);
+    getMapPins(similarOffers.slice(0, MAX_QUANTITY));
+  }
+
+  function getFilteredOffers(data, filterValue) {
+    similarOffers = data.filter(function (it) {
+      return filterValue === 'any' ? it : it.offer.type === filterValue;
+    });
+  }
+
+  function getMapPins(ads) {
+    var fragment = document.createDocumentFragment();
+    ads.forEach(function (currentAd) {
+      fragment.appendChild(window.pin.render(currentAd));
+    });
+    mapPinsBlock.appendChild(fragment);
   }
 
   function removeMapPins() {
@@ -122,15 +149,21 @@
     document.addEventListener('mouseup', pinMouseUpHandler);
   });
 
+  function removeHandlersOfMapFilters() {
+    mapFilterOfType.removeEventListener('change', mapFilterOfTypeChangeHandler);
+  }
+
   window.map = {
     USER_PIN_TAIL_HEIGHT: USER_PIN_TAIL_HEIGHT,
     adFormBlock: adFormBlock,
     userPinBlock: userPinBlock,
     userAddressInput: userAddressInput,
+    toggleFilters: toggleMapFilters,
     removePins: removeMapPins,
     moveToDefaultCoordinatesUserPin: moveToDefaultCoordinatesUserPin,
     userPinMouseDownHandler: userPinMouseDownHandler,
     successDownloadData: onSuccess,
-    errorDownloadData: onError
+    errorDownloadData: onError,
+    removeHandlersOfFilters: removeHandlersOfMapFilters
   };
 })();
