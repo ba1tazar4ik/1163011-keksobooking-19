@@ -16,6 +16,10 @@
   var mapFiltersBlock = window.card.mapBlock.querySelector('.map__filters');
   var mapFiltersControls = mapFiltersBlock.querySelectorAll('select, input');
   var mapFilterOfType = mapFiltersBlock.querySelector('#housing-type');
+  var mapFilterOfPrice = mapFiltersBlock.querySelector('#housing-price');
+  var mapFilterOfRooms = mapFiltersBlock.querySelector('#housing-rooms');
+  var mapFilterOfGuests = mapFiltersBlock.querySelector('#housing-guests');
+  var mapFilterOfFeatures = mapFiltersBlock.querySelector('#housing-features');
   var offers = {};
   var similarOffers = {};
 
@@ -29,24 +33,81 @@
     offers = data;
     toggleMapFilters(false);
     getMapPins(offers.slice(0, MAX_QUANTITY));
-    mapFilterOfType.addEventListener('change', mapFilterOfTypeChangeHandler);
+    mapFiltersBlock.addEventListener('change', mapFiltersChangeHandler);
   }
 
   function onError(message) {
     window.console.error(message);
   }
 
-  function mapFilterOfTypeChangeHandler() {
+  function mapFiltersChangeHandler() {
+    getFilteredOffers(offers);
+    window.utils.debounce(refreshMapPins);
+  }
+
+  function refreshMapPins() {
     removeMapPins();
     window.card.close();
-    getFilteredOffers(offers, mapFilterOfType.value);
     getMapPins(similarOffers.slice(0, MAX_QUANTITY));
   }
 
-  function getFilteredOffers(data, filterValue) {
-    similarOffers = data.filter(function (it) {
-      return filterValue === 'any' ? it : it.offer.type === filterValue;
+  function getSimilarByHousingType(data) {
+    return data.filter(function (it) {
+      return mapFilterOfType.value === 'any' ? it : it.offer.type === mapFilterOfType.value;
     });
+  }
+
+  function getSimilarByHousingPrice(data) {
+    return data.filter(function (it) {
+      switch (mapFilterOfPrice.value) {
+        case 'middle':
+          return it.offer.price > 10000 && it.offer.price < 50000;
+          break;
+
+        case 'low':
+          return it.offer.price <= 10000;
+          break;
+
+        case 'high':
+          return it.offer.price >= 50000;
+          break;
+
+        default:
+          return it;
+      }
+    });
+  }
+
+  function getSimilarByHousingRooms(data) {
+    return data.filter(function (it) {
+      return mapFilterOfRooms.value === 'any' ? it : it.offer.rooms === +mapFilterOfRooms.value;
+    });
+  }
+
+  function getSimilarByHousingGuests(data) {
+    return data.filter(function (it) {
+      return mapFilterOfGuests.value === 'any' ? it : it.offer.guests === +mapFilterOfGuests.value;
+    });
+  }
+
+  function getSimilarByHousingFeatures(data) {
+    var selectedFeatures = [];
+    mapFilterOfFeatures.querySelectorAll('input').forEach(function (current) {
+      if (current.checked) {
+        selectedFeatures.push(current.value);
+      }
+    });
+    return data.filter(function (it) {
+      return selectedFeatures.length <= 0 ? it : window.utils.comparisonArray(selectedFeatures, it.offer.features);
+    });
+  }
+
+  function getFilteredOffers(data) {
+    similarOffers = getSimilarByHousingType(data);
+    similarOffers = getSimilarByHousingRooms(similarOffers);
+    similarOffers = getSimilarByHousingGuests(similarOffers);
+    similarOffers = getSimilarByHousingPrice(similarOffers);
+    similarOffers = getSimilarByHousingFeatures(similarOffers);
   }
 
   function getMapPins(ads) {
@@ -150,7 +211,9 @@
   });
 
   function removeHandlersOfMapFilters() {
-    mapFilterOfType.removeEventListener('change', mapFilterOfTypeChangeHandler);
+    mapFiltersControls.forEach(function (current) {
+      current.removeEventListener('change', mapFiltersChangeHandler);
+    });
   }
 
   window.map = {
