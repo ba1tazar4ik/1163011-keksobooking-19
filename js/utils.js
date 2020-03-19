@@ -18,10 +18,10 @@
 
   function comparisonArray(firstArray, secondArray) {
     var flag;
-    flag = secondArray.length >= 0;
+    flag = secondArray.length > 0;
     for (var i = 0; i < firstArray.length; i++) {
       if (flag) {
-        searchForMatches(firstArray[i], secondArray, flag);
+        flag = searchForMatches(firstArray[i], secondArray, flag);
       } else {
         break;
       }
