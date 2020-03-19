@@ -29,7 +29,7 @@
     return flag;
   }
 
-  function searchForMatches(firstArrayElement, secondArray, index, trigger) {
+  function searchForMatches(firstArrayElement, secondArray, trigger) {
     for (var j = 0; j < secondArray.length; j++) {
       if (firstArrayElement === secondArray[j]) {
         trigger = true;
