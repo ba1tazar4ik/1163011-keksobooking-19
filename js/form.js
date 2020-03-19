@@ -20,7 +20,7 @@
     .querySelector('.error');
   var errorBlock;
   var successBlock;
-  var defaultUserAddressInputValue = {
+  var DefaultUserAddressInputValue = {
     x: window.map.userPinBlock.offsetLeft + Math.floor(window.map.userPinBlock.offsetWidth / 2),
     y: window.map.userPinBlock.offsetTop + window.map.userPinBlock.offsetHeight + window.map.USER_PIN_TAIL_HEIGHT
   };
@@ -76,7 +76,7 @@
     window.map.userPinBlock.addEventListener('mousedown', window.map.userPinMouseDownHandler);
     window.map.userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.map.userAddressInput.value = defaultUserAddressInputValue.x + ',' + defaultUserAddressInputValue.y;
+    window.map.userAddressInput.value = DefaultUserAddressInputValue.x + ',' + DefaultUserAddressInputValue.y;
     toggleForm(true);
     window.map.toggleFilters(true);
   }

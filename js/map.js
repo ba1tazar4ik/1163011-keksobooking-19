@@ -139,26 +139,25 @@
 
     var dragged = false;
 
-    var pinMoveHandler = function (moveEvt) {
-      moveEvt.preventDefault();
+    function pinMoveHandler(moveEvt) {
+      var fullUserPinHeight = userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT;
+      var top = userPinBlock.offsetTop - shift.y;
+      var minTop = MIN_LOCATION_Y - fullUserPinHeight;
+      var maxTop = MAX_LOCATION_Y - fullUserPinHeight;
+      var left = userPinBlock.offsetLeft - shift.x;
+      var maxLeft = mapPinsBlock.offsetWidth - halfUserPinWidth;
       dragged = true;
+
+      moveEvt.preventDefault();
 
       shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY,
       };
-
       startCoords = {
         x: moveEvt.clientX,
         y: moveEvt.clientY,
       };
-
-      var FULL_USER_PIN_HEIGHT = userPinBlock.offsetHeight + USER_PIN_TAIL_HEIGHT;
-      var top = userPinBlock.offsetTop - shift.y;
-      var minTop = MIN_LOCATION_Y - FULL_USER_PIN_HEIGHT;
-      var maxTop = MAX_LOCATION_Y - FULL_USER_PIN_HEIGHT;
-      var left = userPinBlock.offsetLeft - shift.x;
-      var maxLeft = mapPinsBlock.offsetWidth - halfUserPinWidth;
 
       if (top <= minTop) {
         top = minTop;
@@ -174,24 +173,23 @@
 
       userPinBlock.style.top = top + 'px';
       userPinBlock.style.left = left + 'px';
+    }
 
-    };
+    function pinClickPreventDefaultHandler(clickEvt) {
+      clickEvt.preventDefault();
+      userPinBlock.removeEventListener('click', pinClickPreventDefaultHandler);
+    }
 
-    var pinMouseUpHandler = function (upEvt) {
+    function pinMouseUpHandler(upEvt) {
       upEvt.preventDefault();
 
       document.removeEventListener('mousemove', pinMoveHandler);
       document.removeEventListener('mouseup', pinMouseUpHandler);
 
       if (dragged) {
-        var pinClickPreventDefaultHandler = function (clickEvt) {
-          clickEvt.preventDefault();
-          userPinBlock.removeEventListener('click', pinClickPreventDefaultHandler);
-        };
         userPinBlock.addEventListener('click', pinClickPreventDefaultHandler);
       }
-
-    };
+    }
 
     document.addEventListener('mousemove', pinMoveHandler);
     document.addEventListener('mouseup', pinMouseUpHandler);
