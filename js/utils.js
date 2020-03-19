@@ -18,10 +18,10 @@
 
   function comparisonArray(firstArray, secondArray) {
     var flag;
-    flag = secondArray.length >= firstArray.length;
+    flag = secondArray.length >= 0;
     for (var i = 0; i < firstArray.length; i++) {
       if (flag) {
-        searchForMatches(firstArray, secondArray, i, flag);
+        searchForMatches(firstArray[i], secondArray, flag);
       } else {
         break;
       }
@@ -29,9 +29,9 @@
     return flag;
   }
 
-  function searchForMatches(firstArray, secondArray, index, trigger) {
+  function searchForMatches(firstArrayElement, secondArray, index, trigger) {
     for (var j = 0; j < secondArray.length; j++) {
-      if (firstArray[index] === secondArray[j]) {
+      if (firstArrayElement === secondArray[j]) {
         trigger = true;
         break;
       } else {
