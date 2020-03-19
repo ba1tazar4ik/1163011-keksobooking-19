@@ -42,7 +42,7 @@
 
   function mapFiltersChangeHandler() {
     getFilteredOffers(offers);
-    window.utils.debounce(refreshMapPins);
+    window.utils.debounce(refreshMapPins());
   }
 
   function refreshMapPins() {
@@ -51,63 +51,50 @@
     getMapPins(similarOffers.slice(0, MAX_QUANTITY));
   }
 
-  function getSimilarByHousingType(data) {
-    return data.filter(function (it) {
-      return mapFilterOfType.value === 'any' ? it : it.offer.type === mapFilterOfType.value;
-    });
-  }
-
-  function getSimilarByHousingPrice(data) {
-    return data.filter(function (it) {
-      switch (mapFilterOfPrice.value) {
-        case 'middle':
-          return it.offer.price > 10000 && it.offer.price < 50000;
-          break;
-
-        case 'low':
-          return it.offer.price <= 10000;
-          break;
-
-        case 'high':
-          return it.offer.price >= 50000;
-          break;
-
-        default:
-          return it;
-      }
-    });
-  }
-
-  function getSimilarByHousingRooms(data) {
-    return data.filter(function (it) {
-      return mapFilterOfRooms.value === 'any' ? it : it.offer.rooms === +mapFilterOfRooms.value;
-    });
-  }
-
-  function getSimilarByHousingGuests(data) {
-    return data.filter(function (it) {
-      return mapFilterOfGuests.value === 'any' ? it : it.offer.guests === +mapFilterOfGuests.value;
-    });
-  }
-
-  function getSimilarByHousingFeatures(data) {
+  function getFilteredOffers(data) {
     var selectedFeatures = [];
     mapFilterOfFeatures.querySelectorAll('input').forEach(function (current) {
       if (current.checked) {
         selectedFeatures.push(current.value);
       }
     });
-    return data.filter(function (it) {
+
+    similarOffers = data.filter(function (it) {
+      return mapFilterOfType.value === 'any' ? it : it.offer.type === mapFilterOfType.value;
+    });
+
+    similarOffers = similarOffers.filter(function (it) {
+      return mapFilterOfRooms.value === 'any' ? it : it.offer.rooms === +mapFilterOfRooms.value;
+    });
+
+    similarOffers = similarOffers.filter(function (it) {
+      return mapFilterOfGuests.value === 'any' ? it : it.offer.guests === +mapFilterOfGuests.value;
+    });
+
+    similarOffers = similarOffers.filter(function (it) {
+      var flag;
+      switch (mapFilterOfPrice.value) {
+        case 'middle':
+          flag = it.offer.price > 10000 && it.offer.price < 50000;
+          break;
+
+        case 'low':
+          flag = it.offer.price <= 10000;
+          break;
+
+        case 'high':
+          flag = it.offer.price >= 50000;
+          break;
+
+        default:
+          flag = true;
+      }
+      return flag;
+    });
+
+    similarOffers = similarOffers.filter(function (it) {
       return selectedFeatures.length <= 0 ? it : window.utils.comparisonArray(selectedFeatures, it.offer.features);
     });
-  }
-
-  function getFilteredOffers(data) {
-    similarOffers = getSimilarByHousingType(data);
-    similarOffers = getSimilarByHousingRooms(similarOffers);
-    similarOffers = getSimilarByHousingGuests(similarOffers);
-    similarOffers = getSimilarByHousingPrice(similarOffers);
-    similarOffers = getSimilarByHousingFeatures(similarOffers);
   }
 
   function getMapPins(ads) {
