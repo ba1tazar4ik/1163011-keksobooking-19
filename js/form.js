@@ -3,9 +3,9 @@
   var KEYCODE_ENTER = 'Enter';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var mainBlock = document.querySelector('main');
-  var adFormControlsBlocks = document.querySelectorAll('select, fieldset');
+  var adFormControlsBlocks = window.map.adFormBlock.querySelectorAll('select, fieldset');
   var adFormSubmit = window.map.adFormBlock.querySelector('.ad-form__submit');
-  var adFormReset = document.querySelector('.ad-form__reset');
+  var adFormReset = window.map.adFormBlock.querySelector('.ad-form__reset');
   var userCapacity = window.map.adFormBlock.querySelector('#capacity');
   var userRoomNumber = window.map.adFormBlock.querySelector('#room_number');
   var userPrice = window.map.adFormBlock.querySelector('#price');
@@ -20,7 +20,7 @@
     .querySelector('.error');
   var errorBlock;
   var successBlock;
-  var defaultUserAddressInputValue = {
+  var DefaultUserAddressInputValue = {
     x: window.map.userPinBlock.offsetLeft + Math.floor(window.map.userPinBlock.offsetWidth / 2),
     y: window.map.userPinBlock.offsetTop + window.map.userPinBlock.offsetHeight + window.map.USER_PIN_TAIL_HEIGHT
   };
@@ -76,9 +76,9 @@
     window.map.userPinBlock.addEventListener('mousedown', window.map.userPinMouseDownHandler);
     window.map.userPinBlock.addEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.map.userAddressInput.value = defaultUserAddressInputValue.x + ',' + defaultUserAddressInputValue.y;
+    window.map.userAddressInput.value = DefaultUserAddressInputValue.x + ',' + DefaultUserAddressInputValue.y;
     toggleForm(true);
-    window.map.toggleFilters(true);
+    window.filters.toggle(true);
   }
 
   function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
@@ -103,7 +103,7 @@
   }
 
   function resetAllData() {
-    window.map.removePins();
+    window.filters.removeMapPins();
     window.map.moveToDefaultCoordinatesUserPin();
     window.map.adFormBlock.reset();
     disableForms();
