@@ -12,29 +12,6 @@
   var mapFilterOfGuests = mapFiltersBlock.querySelector('#housing-guests');
   var mapFilterOfFeatures = mapFiltersBlock.querySelector('#housing-features');
   var similarOffers = {};
-  var offers = {};
-
-  function onSuccess(data) { // создаем метки для обявлений
-    offers = data;
-    toggleMapFilters(false);
-    getMapPins(offers.slice(0, window.adPins.MAX_QUANTITY));
-    mapFiltersBlock.addEventListener('change', mapFiltersChangeHandler);
-  }
-
-  function onError(message) {
-    window.console.error(message);
-  }
-
-  function mapFiltersChangeHandler() {
-    getFilteredOffers(offers);
-    window.utils.debounce(refreshMapPins());
-  }
-
-  function removeHandlersOfMapFilters() {
-    mapFiltersControls.forEach(function (current) {
-      current.removeEventListener('change', mapFiltersChangeHandler);
-    });
-  }
 
   function toggleMapFilters(booleanTrigger) {
     mapFiltersControls.forEach(function (current) {
@@ -110,14 +87,15 @@
     }
   }
 
-  window.adPins = {
+  window.filters = {
     MAX_QUANTITY: MAX_QUANTITY,
-    mapFiltersBlock: mapFiltersBlock,
+    block: mapFiltersBlock,
+    controls: mapFiltersControls,
     mapPinsBlock: mapPinsBlock,
-    toggleMapFilters: toggleMapFilters,
-    remove: removeMapPins,
-    successDownloadData: onSuccess,
-    errorDownloadData: onError,
-    removeHandlersOfFilters: removeHandlersOfMapFilters
+    toggle: toggleMapFilters,
+    getFilteredOffers: getFilteredOffers,
+    getMapPins: getMapPins,
+    refreshMapPins: refreshMapPins,
+    removeMapPins: removeMapPins
   };
 })();

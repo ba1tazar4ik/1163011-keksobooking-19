@@ -3,9 +3,9 @@
   var KEYCODE_ENTER = 'Enter';
   var OFFER_MIN_COST = {flat: 1000, palace: 10000, house: 5000, bungalo: 0};
   var mainBlock = document.querySelector('main');
-  var adFormControlsBlocks = document.querySelectorAll('select, fieldset');
+  var adFormControlsBlocks = window.map.adFormBlock.querySelectorAll('select, fieldset');
   var adFormSubmit = window.map.adFormBlock.querySelector('.ad-form__submit');
-  var adFormReset = document.querySelector('.ad-form__reset');
+  var adFormReset = window.map.adFormBlock.querySelector('.ad-form__reset');
   var userCapacity = window.map.adFormBlock.querySelector('#capacity');
   var userRoomNumber = window.map.adFormBlock.querySelector('#room_number');
   var userPrice = window.map.adFormBlock.querySelector('#price');
@@ -78,7 +78,7 @@
 
     window.map.userAddressInput.value = DefaultUserAddressInputValue.x + ',' + DefaultUserAddressInputValue.y;
     toggleForm(true);
-    window.adPins.toggleMapFilters(true);
+    window.filters.toggle(true);
   }
 
   function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
@@ -97,18 +97,18 @@
     window.map.userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     window.map.userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.load.fromServer(window.adPins.successDownloadData, window.adPins.errorDownloadData);
+    window.load.fromServer(window.map.successDownloadData, window.map.errorDownloadData);
     startValidationForm();
     toggleForm(false);
   }
 
   function resetAllData() {
-    window.adPins.remove();
+    window.filters.removeMapPins();
     window.map.moveToDefaultCoordinatesUserPin();
     window.map.adFormBlock.reset();
     disableForms();
     window.card.close();
-    window.adPins.removeHandlersOfFilters();
+    window.map.removeHandlersOfFilters();
   }
 
   function adFormBlockSubmitHandler(evt) {

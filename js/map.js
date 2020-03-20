@@ -5,12 +5,35 @@
   var USER_PIN_TAIL_HEIGHT = 15;
   var startCoords = {};
   var shift = {};
-  var userPinBlock = window.adPins.mapPinsBlock.querySelector('.map__pin--main');
+  var userPinBlock = window.filters.mapPinsBlock.querySelector('.map__pin--main');
   var userPinBlockDefaultX = userPinBlock.offsetLeft;
   var userPinBlockDefaultY = userPinBlock.offsetTop;
   var adFormBlock = document.querySelector('.ad-form');
   var userAddressInput = adFormBlock.querySelector('#address');
   var halfUserPinWidth = Math.floor(userPinBlock.offsetWidth / 2);
+  var offers = {};
+
+  function onSuccess(data) { // создаем метки для обявлений
+    offers = data;
+    window.filters.toggle(false);
+    window.filters.getMapPins(offers.slice(0, window.filters.MAX_QUANTITY));
+    window.filters.block.addEventListener('change', mapFiltersChangeHandler);
+  }
+
+  function onError(message) {
+    window.console.error(message);
+  }
+
+  function mapFiltersChangeHandler() {
+    window.filters.getFilteredOffers(offers);
+    window.utils.debounce(window.filters.refreshMapPins());
+  }
+
+  function removeHandlersOfMapFilters() {
+    window.filters.controls.forEach(function (current) {
+      current.removeEventListener('change', mapFiltersChangeHandler);
+    });
+  }
 
   function moveToDefaultCoordinatesUserPin() {
     userPinBlock.style.cssText = 'left: ' + userPinBlockDefaultX + 'px; top: ' + userPinBlockDefaultY + 'px;';
@@ -45,7 +68,7 @@
       var minTop = MIN_LOCATION_Y - fullUserPinHeight;
       var maxTop = MAX_LOCATION_Y - fullUserPinHeight;
       var left = userPinBlock.offsetLeft - shift.x;
-      var maxLeft = window.adPins.mapPinsBlock.offsetWidth - halfUserPinWidth;
+      var maxLeft = window.filters.mapPinsBlock.offsetWidth - halfUserPinWidth;
       dragged = true;
 
       moveEvt.preventDefault();
@@ -102,5 +125,8 @@
     userAddressInput: userAddressInput,
     moveToDefaultCoordinatesUserPin: moveToDefaultCoordinatesUserPin,
     userPinMouseDownHandler: userPinMouseDownHandler,
+    successDownloadData: onSuccess,
+    errorDownloadData: onError,
+    removeHandlersOfFilters: removeHandlersOfMapFilters
   };
 })();
