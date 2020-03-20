@@ -20,9 +20,8 @@
     var flag;
     flag = secondArray.length > 0;
     for (var i = 0; i < firstArray.length; i++) {
-      if (flag) {
-        flag = secondArray.includes(firstArray[i]);
-      } else {
+      flag = secondArray.includes(firstArray[i]);
+      if (!flag) {
         break;
       }
     }
