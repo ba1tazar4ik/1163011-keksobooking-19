@@ -78,7 +78,7 @@
 
     window.map.userAddressInput.value = DefaultUserAddressInputValue.x + ',' + DefaultUserAddressInputValue.y;
     toggleForm(true);
-    window.map.toggleFilters(true);
+    window.adPins.toggleMapFilters(true);
   }
 
   function userPinFirstMouseDownHandler(evt) { // функция запускает активацию сайта после клика на метке и убирает обработчик клика и нажатия Enter
@@ -97,18 +97,18 @@
     window.map.userPinBlock.removeEventListener('mousedown', userPinFirstMouseDownHandler);
     window.map.userPinBlock.removeEventListener('keydown', userPinFirstKeyDownHandler);
 
-    window.load.fromServer(window.map.successDownloadData, window.map.errorDownloadData);
+    window.load.fromServer(window.adPins.successDownloadData, window.adPins.errorDownloadData);
     startValidationForm();
     toggleForm(false);
   }
 
   function resetAllData() {
-    window.map.removePins();
+    window.adPins.remove();
     window.map.moveToDefaultCoordinatesUserPin();
     window.map.adFormBlock.reset();
     disableForms();
     window.card.close();
-    window.map.removeHandlersOfFilters();
+    window.adPins.removeHandlersOfFilters();
   }
 
   function adFormBlockSubmitHandler(evt) {
