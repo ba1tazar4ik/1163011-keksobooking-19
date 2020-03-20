@@ -63,21 +63,15 @@
 
     similarOffers = data.filter(function (it) {
       return mapFilterOfType.value === 'any' ? it : it.offer.type === mapFilterOfType.value;
-    });
-
-    similarOffers = similarOffers.filter(function (it) {
+    } && function (it) {
       return mapFilterOfRooms.value === 'any' ? it : it.offer.rooms === +mapFilterOfRooms.value;
-    });
-
-    similarOffers = similarOffers.filter(function (it) {
+    } && function (it) {
       return mapFilterOfGuests.value === 'any' ? it : it.offer.guests === +mapFilterOfGuests.value;
-    });
-
-    similarOffers = similarOffers.filter(function (it) {
+    } && function (it) {
       var flag;
       switch (mapFilterOfPrice.value) {
         case 'middle':
-          flag = it.offer.price > LOW_PRICE && it.offer.price <HIGH_PRICE;
+          flag = it.offer.price > LOW_PRICE && it.offer.price < HIGH_PRICE;
           break;
 
         case 'low':
@@ -92,9 +86,7 @@
           flag = true;
       }
       return flag;
-    });
-
-    similarOffers = similarOffers.filter(function (it) {
+    } && function (it) {
       return selectedFeatures.length <= 0 ? it : window.utils.comparisonArray(selectedFeatures, it.offer.features);
     });
   }
