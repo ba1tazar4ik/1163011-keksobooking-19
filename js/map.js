@@ -53,41 +53,52 @@
     getMapPins(similarOffers.slice(0, MAX_QUANTITY));
   }
 
-  function getFilteredOffers(data) {
+  function filtersByType(ad) {
+    return mapFilterOfType.value === 'any' ? true : ad.offer.type === mapFilterOfType.value;
+  }
+
+  function filtersByRooms(ad) {
+    return mapFilterOfRooms.value === 'any' ? true : ad.offer.rooms === +mapFilterOfRooms.value;
+  }
+
+  function filtersByGuests(ad) {
+    return mapFilterOfGuests.value === 'any' ? true : ad.offer.guests === +mapFilterOfGuests.value;
+  }
+
+  function filtersByPrice(ad) {
+    var flag;
+    switch (mapFilterOfPrice.value) {
+      case 'middle':
+        flag = ad.offer.price > LOW_PRICE && ad.offer.price < HIGH_PRICE;
+        break;
+
+      case 'low':
+        flag = ad.offer.price <= LOW_PRICE;
+        break;
+
+      case 'high':
+        flag = ad.offer.price >= HIGH_PRICE;
+        break;
+
+      default:
+        flag = true;
+    }
+    return flag;
+  }
+
+  function filtersByFeatures(ad) {
     var selectedFeatures = [];
     mapFilterOfFeatures.querySelectorAll('input').forEach(function (current) {
       if (current.checked) {
         selectedFeatures.push(current.value);
       }
     });
+    return selectedFeatures.length <= 0 ? true : window.utils.comparisonArray(selectedFeatures, ad.offer.features);
+  }
 
+  function getFilteredOffers(data) {
     similarOffers = data.filter(function (it) {
-      return mapFilterOfType.value === 'any' ? it : it.offer.type === mapFilterOfType.value;
-    } && function (it) {
-      return mapFilterOfRooms.value === 'any' ? it : it.offer.rooms === +mapFilterOfRooms.value;
-    } && function (it) {
-      return mapFilterOfGuests.value === 'any' ? it : it.offer.guests === +mapFilterOfGuests.value;
-    } && function (it) {
-      var flag;
-      switch (mapFilterOfPrice.value) {
-        case 'middle':
-          flag = it.offer.price > LOW_PRICE && it.offer.price < HIGH_PRICE;
-          break;
-
-        case 'low':
-          flag = it.offer.price <= LOW_PRICE;
-          break;
-
-        case 'high':
-          flag = it.offer.price >= HIGH_PRICE;
-          break;
-
-        default:
-          flag = true;
-      }
-      return flag;
-    } && function (it) {
-      return selectedFeatures.length <= 0 ? it : window.utils.comparisonArray(selectedFeatures, it.offer.features);
+      return filtersByType(it) && filtersByRooms(it) && filtersByGuests(it) && filtersByPrice(it) && filtersByFeatures(it);
     });
   }
 
