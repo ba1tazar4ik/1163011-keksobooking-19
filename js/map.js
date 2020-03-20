@@ -4,6 +4,8 @@
   var MAX_LOCATION_Y = 630;
   var MAX_QUANTITY = 5;
   var USER_PIN_TAIL_HEIGHT = 15;
+  var LOW_PRICE = 10000;
+  var HIGH_PRICE = 50000;
   var startCoords = {};
   var shift = {};
   var userPinBlock = window.card.mapBlock.querySelector('.map__pin--main');
@@ -75,15 +77,15 @@
       var flag;
       switch (mapFilterOfPrice.value) {
         case 'middle':
-          flag = it.offer.price > 10000 && it.offer.price < 50000;
+          flag = it.offer.price > LOW_PRICE && it.offer.price <HIGH_PRICE;
           break;
 
         case 'low':
-          flag = it.offer.price <= 10000;
+          flag = it.offer.price <= LOW_PRICE;
           break;
 
         case 'high':
-          flag = it.offer.price >= 50000;
+          flag = it.offer.price >= HIGH_PRICE;
           break;
 
         default:

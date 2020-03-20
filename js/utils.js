@@ -21,24 +21,12 @@
     flag = secondArray.length > 0;
     for (var i = 0; i < firstArray.length; i++) {
       if (flag) {
-        flag = searchForMatches(firstArray[i], secondArray, flag);
+        flag = secondArray.includes(firstArray[i]);
       } else {
         break;
       }
     }
     return flag;
-  }
-
-  function searchForMatches(firstArrayElement, secondArray, trigger) {
-    for (var j = 0; j < secondArray.length; j++) {
-      if (firstArrayElement === secondArray[j]) {
-        trigger = true;
-        break;
-      } else {
-        trigger = false;
-      }
-    }
-    return trigger;
   }
 
   window.utils = {
